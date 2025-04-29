@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/account"
+    },
+    {
+      "path": "./apps/blog-e2e"
+    },
+    {
+      "path": "./apps/blog"
+    },
+    {
+      "path": "./apps/notify-e2e"
+    },
+    {
+      "path": "./apps/notify"
+    },
+    {
+      "path": "./apps/files-storage-e2e"
+    },
+    {
+      "path": "./apps/files-storage"
+    }
+  ]
+}
