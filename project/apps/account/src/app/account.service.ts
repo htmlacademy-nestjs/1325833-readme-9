@@ -7,7 +7,7 @@ import { UserRepository } from './user.repository';
 import { AccountResponse } from './types';
 import { ChangeUserPasswordDto, CreateUserDto, LoginUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
-import { PublicUser } from '@project/core';
+import { type CurrentUserInterface, PublicUser } from '@project/core';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -52,7 +52,7 @@ export class AccountService {
       );
 
       if (!isPasswordMatched) {
-        throw new UnauthorizedException('User not found');
+        throw new UnauthorizedException('Passwords do not match');
       }
 
       const { passwordHash, ...restUser } = user;
@@ -80,8 +80,22 @@ export class AccountService {
     };
   }
 
-  async changePassword(dto: ChangeUserPasswordDto, userId: string) {
-    return this.userRepository.updateUser(dto, userId);
+  async changePassword(
+    dto: ChangeUserPasswordDto,
+    currentUser: CurrentUserInterface
+  ) {
+    const isPasswordMatched = await bcrypt.compare(
+      dto.currentPassword,
+      currentUser.passwordHash
+    );
+
+    if (!isPasswordMatched) {
+      throw new UnauthorizedException('Old password do not match');
+    }
+
+    const passwordHash = await this.hashPassword(dto.newPassword);
+
+    return this.userRepository.updateUser({ passwordHash }, currentUser.id);
   }
 
   private async hashPassword(password: string) {

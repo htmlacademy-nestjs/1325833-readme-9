@@ -23,6 +23,12 @@ export class UserRepository {
   }
 
   async updateUser(dto: Omit<Partial<User>, 'id'>, userId: string) {
-    return (this.users = this.users.map((user) => user));
+    return this.users.map((user) => {
+      if (user.id === userId) {
+        return { ...user, ...dto };
+      }
+
+      return user;
+    });
   }
 }
