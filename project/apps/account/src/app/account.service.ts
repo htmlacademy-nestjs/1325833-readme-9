@@ -1,13 +1,14 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { AccountResponse } from './types';
 import { ChangeUserPasswordDto, CreateUserDto, LoginUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
-import { type CurrentUserInterface, PublicUser } from '@project/core';
+import { PublicUser } from '@project/core';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -67,7 +68,7 @@ export class AccountService {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new NotFoundException('User not found');
     }
 
     const { id: userId, registrationDate, subscribersCount, postsCount } = user;
@@ -80,13 +81,14 @@ export class AccountService {
     };
   }
 
-  async changePassword(
-    dto: ChangeUserPasswordDto,
-    currentUser: CurrentUserInterface
-  ) {
+  async changePassword(dto: ChangeUserPasswordDto, currentUserEmail: string) {
+    const existingUser = await this.userRepository.findByEmail(
+      currentUserEmail
+    );
+
     const isPasswordMatched = await bcrypt.compare(
       dto.currentPassword,
-      currentUser.passwordHash
+      existingUser!.passwordHash
     );
 
     if (!isPasswordMatched) {
@@ -95,7 +97,7 @@ export class AccountService {
 
     const passwordHash = await this.hashPassword(dto.newPassword);
 
-    return this.userRepository.updateUser({ passwordHash }, currentUser.id);
+    return this.userRepository.updateUser({ passwordHash }, currentUserEmail);
   }
 
   private async hashPassword(password: string) {

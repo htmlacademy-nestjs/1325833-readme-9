@@ -22,13 +22,15 @@ export class UserRepository {
     return this.users.find((user) => user.id === id) || null;
   }
 
-  async updateUser(dto: Omit<Partial<User>, 'id'>, userId: string) {
-    return this.users.map((user) => {
-      if (user.id === userId) {
+  async updateUser(dto: Omit<Partial<User>, 'id'>, userEmail: string) {
+    this.users = this.users.map((user) => {
+      if (user.email === userEmail) {
         return { ...user, ...dto };
       }
 
       return user;
     });
+
+    return true;
   }
 }

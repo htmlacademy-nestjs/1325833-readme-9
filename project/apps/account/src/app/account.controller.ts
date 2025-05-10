@@ -13,7 +13,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AccountService } from './account.service';
 import { ChangeUserPasswordDto, CreateUserDto, LoginUserDto } from './dto';
 import { AccountResponse } from './types';
-import { CurrentUser, type CurrentUserInterface } from '@project/core';
+import { CurrentUser } from '@project/core';
 
 @ApiTags('Account')
 @Controller('account')
@@ -55,8 +55,8 @@ export class AccountController {
   })
   async changePassword(
     @Body() dto: ChangeUserPasswordDto,
-    @CurrentUser() currentUser: CurrentUserInterface
+    @CurrentUser('email') currentUserEmail: string
   ) {
-    return this.accountService.changePassword(dto, currentUser);
+    return this.accountService.changePassword(dto, currentUserEmail);
   }
 }

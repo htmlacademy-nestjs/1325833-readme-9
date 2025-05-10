@@ -7,19 +7,10 @@
       "path": "./apps/account"
     },
     {
-      "path": "./apps/blog-e2e"
-    },
-    {
       "path": "./apps/blog"
     },
     {
-      "path": "./apps/notify-e2e"
-    },
-    {
       "path": "./apps/notify"
-    },
-    {
-      "path": "./apps/files-storage-e2e"
     },
     {
       "path": "./apps/files-storage"
@@ -29,9 +20,6 @@
     },
     {
       "path": "./libs/shared/swagger"
-    },
-    {
-      "path": "./apps/api-gateway-e2e"
     },
     {
       "path": "./apps/api-gateway"
