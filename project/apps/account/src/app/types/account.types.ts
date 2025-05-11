@@ -1,3 +1,3 @@
-export type AccountResponse = {
+export type AuthUser = {
   jwt: string;
 };

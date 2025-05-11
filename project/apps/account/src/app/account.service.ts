@@ -5,11 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import { AccountResponse } from './types';
+import { AuthUser } from './types';
 import { ChangeUserPasswordDto, CreateUserDto, LoginUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { PublicUser } from '@project/core';
 import { JwtService } from '@nestjs/jwt';
+import { AccountExceptions } from './constants';
 
 @Injectable()
 export class AccountService {
@@ -18,11 +19,11 @@ export class AccountService {
     private readonly jwtService: JwtService
   ) {}
 
-  async createUser(dto: CreateUserDto): Promise<AccountResponse> {
+  async createUser(dto: CreateUserDto): Promise<AuthUser> {
     const existingUser = await this.userRepository.findByEmail(dto.email);
 
     if (existingUser) {
-      throw new ConflictException('User already exists');
+      throw new ConflictException(AccountExceptions.USER_ALREADY_EXISTS);
     }
 
     const passwordHash = await this.hashPassword(dto.password);
@@ -35,15 +36,15 @@ export class AccountService {
       postsCount: 0,
     };
 
-    await this.userRepository.create({
+    const newUser = await this.userRepository.create({
       ...newUserPayload,
       passwordHash,
     });
 
-    return { jwt: this.jwtService.sign(newUserPayload) };
+    return { jwt: this.jwtService.sign({ ...newUserPayload, id: newUser.id }) };
   }
 
-  async login(dto: LoginUserDto): Promise<AccountResponse> {
+  async login(dto: LoginUserDto): Promise<AuthUser> {
     const user = await this.userRepository.findByEmail(dto.email);
 
     if (user) {
@@ -53,7 +54,9 @@ export class AccountService {
       );
 
       if (!isPasswordMatched) {
-        throw new UnauthorizedException('Passwords do not match');
+        throw new UnauthorizedException(
+          AccountExceptions.PASSWORD_DO_NOT_MATCH
+        );
       }
 
       const { passwordHash, ...restUser } = user;
@@ -61,14 +64,14 @@ export class AccountService {
       return { jwt: this.jwtService.sign(restUser) };
     }
 
-    throw new UnauthorizedException('User not found');
+    throw new UnauthorizedException(AccountExceptions.USER_NOT_FOUND);
   }
 
   async getUser(id: string): Promise<PublicUser> {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(AccountExceptions.USER_NOT_FOUND);
     }
 
     const { id: userId, registrationDate, subscribersCount, postsCount } = user;
@@ -81,10 +84,8 @@ export class AccountService {
     };
   }
 
-  async changePassword(dto: ChangeUserPasswordDto, currentUserEmail: string) {
-    const existingUser = await this.userRepository.findByEmail(
-      currentUserEmail
-    );
+  async changePassword(dto: ChangeUserPasswordDto, id: string) {
+    const existingUser = await this.userRepository.findById(id);
 
     const isPasswordMatched = await bcrypt.compare(
       dto.currentPassword,
@@ -92,15 +93,17 @@ export class AccountService {
     );
 
     if (!isPasswordMatched) {
-      throw new UnauthorizedException('Old password do not match');
+      throw new UnauthorizedException(
+        AccountExceptions.OLD_PASSWORD_DO_NOT_MATCH
+      );
     }
 
     const passwordHash = await this.hashPassword(dto.newPassword);
 
-    return this.userRepository.updateUser({ passwordHash }, currentUserEmail);
+    return this.userRepository.updateUser({ passwordHash }, id);
   }
 
-  private async hashPassword(password: string) {
+  private async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
 
     return bcrypt.hash(password, salt);
