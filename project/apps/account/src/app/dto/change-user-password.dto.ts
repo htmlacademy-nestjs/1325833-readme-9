@@ -14,6 +14,8 @@ export class ChangeUserPasswordDto {
   @ApiProperty({
     example: '1234567890',
     description: 'New user password',
+    minLength: 6,
+    maxLength: 12,
   })
   newPassword: string;
 }

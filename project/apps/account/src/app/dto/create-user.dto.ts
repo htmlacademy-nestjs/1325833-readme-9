@@ -14,6 +14,8 @@ export class CreateUserDto {
   @ApiProperty({
     example: 'example_name',
     description: 'Username',
+    minLength: 3,
+    maxLength: 50,
   })
   username: string;
 
@@ -22,6 +24,8 @@ export class CreateUserDto {
   @ApiProperty({
     example: '1234567890',
     description: 'User password',
+    minLength: 6,
+    maxLength: 12,
   })
   password: string;
 
