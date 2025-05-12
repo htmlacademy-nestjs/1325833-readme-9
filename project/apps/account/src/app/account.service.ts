@@ -100,7 +100,7 @@ export class AccountService {
 
     const passwordHash = await this.hashPassword(dto.newPassword);
 
-    return this.userRepository.updateUser({ passwordHash }, id);
+    return this.userRepository.update({ passwordHash }, id);
   }
 
   private async hashPassword(password: string): Promise<string> {

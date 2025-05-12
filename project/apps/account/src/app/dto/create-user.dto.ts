@@ -1,5 +1,5 @@
 import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @IsEmail()
@@ -31,7 +31,7 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'https://google.com/avatar-21412412',
     description: 'User avatar',
   })
