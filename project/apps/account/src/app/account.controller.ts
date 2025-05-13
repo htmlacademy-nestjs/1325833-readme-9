@@ -7,6 +7,8 @@ import {
   Post,
   Body,
   Patch,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AccountService } from './account.service';
@@ -26,6 +28,7 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Post('register')
+  @HttpCode(HttpStatus.CREATED)
   @RegisterSwaggerDecorator()
   async register(@Body() dto: CreateUserDto): Promise<AuthUser> {
     return this.accountService.createUser(dto);
