@@ -6,6 +6,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { UserRepository } from './user.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJwtConfig } from '@project/core';
+import { accountConfig, mongoConfig } from './config';
 
 const ENV_ACCOUNT_FILE_PATH = 'apps/account/account.env';
 
@@ -14,8 +15,7 @@ const ENV_ACCOUNT_FILE_PATH = 'apps/account/account.env';
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      // TODO: Передавать список конфигураций для загрузки
-      load: [],
+      load: [accountConfig, mongoConfig],
       envFilePath: ENV_ACCOUNT_FILE_PATH,
     }),
     JwtModule.registerAsync({
