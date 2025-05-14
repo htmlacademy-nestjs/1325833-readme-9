@@ -47,24 +47,22 @@ export class AccountService {
   async login(dto: LoginUserDto): Promise<AuthUser> {
     const user = await this.userRepository.findByEmail(dto.email);
 
-    if (user) {
-      const isPasswordMatched = await bcrypt.compare(
-        dto.password,
-        user.passwordHash
-      );
-
-      if (!isPasswordMatched) {
-        throw new UnauthorizedException(
-          AccountExceptions.PASSWORD_DO_NOT_MATCH
-        );
-      }
-
-      const { passwordHash, ...restUser } = user;
-
-      return { jwt: this.jwtService.sign(restUser) };
+    if (!user) {
+      throw new UnauthorizedException(AccountExceptions.USER_NOT_FOUND);
     }
 
-    throw new UnauthorizedException(AccountExceptions.USER_NOT_FOUND);
+    const isPasswordMatched = await bcrypt.compare(
+      dto.password,
+      user.passwordHash
+    );
+
+    if (!isPasswordMatched) {
+      throw new UnauthorizedException(AccountExceptions.PASSWORD_DO_NOT_MATCH);
+    }
+
+    const { passwordHash, ...restUser } = user;
+
+    return { jwt: this.jwtService.sign(restUser) };
   }
 
   async getUser(id: string): Promise<PublicUser> {
@@ -87,9 +85,13 @@ export class AccountService {
   async changePassword(dto: ChangeUserPasswordDto, id: string) {
     const existingUser = await this.userRepository.findById(id);
 
+    if (!existingUser) {
+      throw new UnauthorizedException(AccountExceptions.USER_NOT_FOUND);
+    }
+
     const isPasswordMatched = await bcrypt.compare(
       dto.currentPassword,
-      existingUser!.passwordHash
+      existingUser.passwordHash
     );
 
     if (!isPasswordMatched) {
