@@ -1,3 +1,3 @@
-export type AuthUser = {
+export interface AuthUser {
   jwt: string;
-};
+}

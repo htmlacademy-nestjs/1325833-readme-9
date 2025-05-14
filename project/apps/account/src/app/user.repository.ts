@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@project/core';
+import { BaseResponse, User } from '@project/core';
 import * as crypto from 'node:crypto';
+import { ChangePasswordRdo } from './rdo';
 
 @Injectable()
 export class UserRepository {
@@ -22,15 +23,22 @@ export class UserRepository {
     return this.users.find((user) => user.id === id) || null;
   }
 
-  async update(dto: Omit<Partial<User>, 'id'>, id: string) {
+  async update(
+    dto: Omit<Partial<User>, 'id'>,
+    id: string
+  ): Promise<BaseResponse> {
+    let isUpdated = false;
+
     this.users = this.users.map((user) => {
       if (user.id === id) {
+        isUpdated = true;
+
         return { ...user, ...dto };
       }
 
       return user;
     });
 
-    return true;
+    return { isSuccess: isUpdated };
   }
 }
