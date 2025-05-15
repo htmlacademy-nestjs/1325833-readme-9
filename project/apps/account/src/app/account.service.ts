@@ -5,10 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import { AuthUser } from './types';
 import { ChangeUserPasswordDto, CreateUserDto, LoginUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
-import { PublicUser } from '@project/core';
 import { JwtService } from '@nestjs/jwt';
 import { AccountExceptions } from './constants';
 import { ChangePasswordRdo, GetUserRdo, LoginRdo, RegisterRdo } from './rdo';
@@ -61,9 +59,9 @@ export class AccountService {
       throw new UnauthorizedException(AccountExceptions.PASSWORD_DO_NOT_MATCH);
     }
 
-    const { passwordHash, ...restUser } = user;
+    const { passwordHash, _id: userId, ...restUser } = user;
 
-    return { jwt: this.jwtService.sign(restUser) };
+    return { jwt: this.jwtService.sign({ id: userId, ...restUser }) };
   }
 
   async getUser(id: string): Promise<GetUserRdo> {
@@ -73,7 +71,12 @@ export class AccountService {
       throw new NotFoundException(AccountExceptions.USER_NOT_FOUND);
     }
 
-    const { id: userId, registrationDate, subscribersCount, postsCount } = user;
+    const {
+      _id: userId,
+      registrationDate,
+      subscribersCount,
+      postsCount,
+    } = user;
 
     return {
       id: userId,

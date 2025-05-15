@@ -1,16 +1,8 @@
 import { registerAs } from '@nestjs/config';
+import { MongoConfig } from '@project/core';
 import * as Joi from 'joi';
 
 const DEFAULT_MONGO_PORT = 27017;
-
-export interface MongoConfig {
-  host: string;
-  name: string;
-  port: number;
-  user: string;
-  password: string;
-  authBase: string;
-}
 
 const dbValidationSchema = Joi.object({
   host: Joi.string().hostname().required(),
