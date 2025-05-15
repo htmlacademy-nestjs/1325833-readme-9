@@ -17,6 +17,8 @@
     "strict": true,
     "target": "es2022",
     "customConditions": ["development"],
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   }
 }

@@ -1,6 +1,7 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LoginUserDto } from '../../dto';
+import { LoginRdo } from '../../rdo';
 
 export const LoginSwaggerDecorator = () =>
   applyDecorators(
@@ -9,7 +10,11 @@ export const LoginSwaggerDecorator = () =>
       summary: 'Login to account',
       description: 'Login to account with email and password',
     }),
-    ApiResponse({ status: HttpStatus.OK, description: 'Login successful' }),
+    ApiResponse({
+      type: LoginRdo,
+      status: HttpStatus.OK,
+      description: 'Login successful',
+    }),
     ApiResponse({
       status: HttpStatus.UNAUTHORIZED,
       description: 'Incorrect email or password',

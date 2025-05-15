@@ -1,36 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@project/core';
-import * as crypto from 'node:crypto';
+import { BaseResponse, User } from '@project/core';
+import { InjectModel } from '@nestjs/mongoose';
+import { UserEntity } from './entities';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class UserRepository {
-  private users: User[] = [];
+  constructor(
+    @InjectModel(UserEntity.name) private readonly userModel: Model<UserEntity>
+  ) {}
 
-  async create(user: Omit<User, 'id'>): Promise<User> {
-    const newUser = { ...user, id: crypto.randomUUID() };
+  async create(user: Omit<User, 'id'>): Promise<UserEntity> {
+    const newUser = new this.userModel(user);
 
-    this.users.push(newUser);
-
-    return newUser;
+    return newUser.save();
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    return this.users.find((user) => user.email === email) || null;
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    return this.userModel.findOne({ email }).lean().exec();
   }
 
-  async findById(id: string): Promise<User | null> {
-    return this.users.find((user) => user.id === id) || null;
+  async findById(id: string): Promise<UserEntity | null> {
+    return this.userModel.findOne({ _id: id }).lean().exec();
   }
 
-  async update(dto: Omit<Partial<User>, 'id'>, id: string) {
-    this.users = this.users.map((user) => {
-      if (user.id === id) {
-        return { ...user, ...dto };
-      }
+  async update(
+    dto: Omit<Partial<User>, 'id'>,
+    id: string
+  ): Promise<BaseResponse> {
+    let isUpdated = false;
 
-      return user;
-    });
+    try {
+      await this.userModel.findByIdAndUpdate(id, dto, { new: true }).exec();
 
-    return true;
+      isUpdated = true;
+    } catch {
+      // ignore
+    }
+
+    return { isSuccess: isUpdated };
   }
 }
