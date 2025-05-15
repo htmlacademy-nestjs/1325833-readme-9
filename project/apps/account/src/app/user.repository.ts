@@ -21,7 +21,6 @@ export class UserRepository {
   }
 
   async findById(id: string): Promise<UserEntity | null> {
-    console.log(321, id);
     return this.userModel.findOne({ _id: id }).lean().exec();
   }
 
