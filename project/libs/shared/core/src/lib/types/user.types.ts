@@ -9,12 +9,15 @@ export interface User {
   avatar?: string;
 }
 
-export type PublicUser = Pick<
-  User,
-  'id' | 'subscribersCount' | 'postsCount' | 'registrationDate'
->;
+export interface PublicUser {
+  id: User['id'];
+  subscribersCount: User['subscribersCount'];
+  postsCount: User['postsCount'];
+  registrationDate: User['registrationDate'];
+}
 
 export interface CurrentUserInterface {
+  id: string;
   email: string;
   username: string;
 }

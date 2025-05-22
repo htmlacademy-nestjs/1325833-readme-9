@@ -5,6 +5,7 @@ import {
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
+import { GetUserRdo } from '../../rdo';
 
 export const GetUserSwaggerDecorator = () =>
   applyDecorators(
@@ -19,6 +20,7 @@ export const GetUserSwaggerDecorator = () =>
       description: 'User unique identifier',
     }),
     ApiResponse({
+      type: GetUserRdo,
       status: HttpStatus.OK,
       description: 'User found successfully',
     }),

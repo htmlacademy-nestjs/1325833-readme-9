@@ -6,6 +6,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { ChangeUserPasswordDto } from '../../dto';
+import { ChangePasswordRdo } from '../../rdo';
 
 export const ChangePasswordSwaggerDecorator = () =>
   applyDecorators(
@@ -16,6 +17,7 @@ export const ChangePasswordSwaggerDecorator = () =>
       description: 'Change user password',
     }),
     ApiResponse({
+      type: ChangePasswordRdo,
       status: HttpStatus.OK,
       description: 'Password changed successfully',
     }),

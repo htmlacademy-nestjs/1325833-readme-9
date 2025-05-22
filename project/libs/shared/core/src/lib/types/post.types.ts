@@ -1,6 +1,15 @@
-export type PostType = 'video' | 'text' | 'quote' | 'photo' | 'link';
+export enum PostType {
+  VIDEO = 'video',
+  TEXT = 'text',
+  QUOTE = 'quote',
+  PHOTO = 'photo',
+  LINK = 'link',
+}
 
-export type PostStatus = 'published' | 'draft';
+export enum PostStatus {
+  PUBLISHED = 'published',
+  DRAFT = 'draft',
+}
 
 export interface BasePost {
   id: string;
@@ -12,36 +21,36 @@ export interface BasePost {
   type: PostType;
   likesCount: number;
   commentsCount: number;
+  tags: string[];
   originalPostId?: string;
-  tags?: string[];
 }
 
 export interface VideoPost extends BasePost {
-  type: 'video';
+  type: PostType.VIDEO;
   title: string;
   videoUrl: string;
 }
 
 export interface TextPost extends BasePost {
-  type: 'text';
+  type: PostType.TEXT;
   title: string;
   preview: string;
   content: string;
 }
 
 export interface QuotePost extends BasePost {
-  type: 'quote';
+  type: PostType.QUOTE;
   author: string;
   content: string;
 }
 
 export interface PhotoPost extends BasePost {
-  type: 'photo';
+  type: PostType.PHOTO;
   photo: string;
 }
 
 export interface LinkPost extends BasePost {
-  type: 'link';
+  type: PostType.LINK;
   link: string;
   description?: string;
 }
