@@ -23,6 +23,7 @@ export interface BasePost {
   commentsCount: number;
   tags: string[];
   originalPostId?: string;
+  originalPostAuthorId?: string;
 }
 
 export interface VideoPost extends BasePost {
@@ -40,7 +41,7 @@ export interface TextPost extends BasePost {
 
 export interface QuotePost extends BasePost {
   type: PostType.QUOTE;
-  author: string;
+  quoteAuthor: string;
   content: string;
 }
 
