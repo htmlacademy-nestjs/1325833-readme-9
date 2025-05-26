@@ -7,3 +7,11 @@ docker compose --file ./apps/account/docker-compose.dev.yml --project-name "read
 ```bash
 docker compose --file ./apps/blog/docker-compose.dev.yml --project-name "readme-blog" --env-file ./apps/blog/blog.env up -d
 ```
+
+npx generate
+
+npx prisma migrate dev --name init
+
+npx prisma migrate reset
+
+npx prisma studio

@@ -11,6 +11,12 @@ export enum PostStatus {
   DRAFT = 'draft',
 }
 
+export enum PostSort {
+  DATE = 'date',
+  LIKES = 'likes',
+  COMMENTS = 'comments',
+}
+
 export interface BasePost {
   id: string;
   authorId: string;
