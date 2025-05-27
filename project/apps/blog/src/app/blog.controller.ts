@@ -1,35 +1,41 @@
-import { Controller, Post, Param, Get, Query } from '@nestjs/common';
+import { Controller, Post, Param, Get, Query, Body } from '@nestjs/common';
 import { BlogService } from './blog.service';
-import { PostType } from '@project/core';
-import { GetPostsDto } from './dto';
+import {
+  CreateLinkPostDto,
+  CreatePhotoPostDto,
+  CreateQuotePostDto,
+  CreateTextPostDto,
+  CreateVideoPostDto,
+  GetPostsDto,
+} from './dto';
 
 @Controller('blog')
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
   @Post('video')
-  async createVideoPost(@Param('postType') postType: PostType) {
-    return this.blogService.createPost(postType);
+  async createVideoPost(@Body() dto: CreateVideoPostDto) {
+    return this.blogService.createVideoPost(dto);
   }
 
   @Post('text')
-  async createTextPost(@Param('postType') postType: PostType) {
-    return this.blogService.createPost(postType);
+  async createTextPost(@Body() dto: CreateTextPostDto) {
+    return this.blogService.createTextPost(dto);
   }
 
   @Post('quote')
-  async createQuotePost(@Param('postType') postType: PostType) {
-    return this.blogService.createPost(postType);
+  async createQuotePost(@Body() dto: CreateQuotePostDto) {
+    return this.blogService.createQuotePost(dto);
   }
 
   @Post('photo')
-  async createPhotoPost(@Param('postType') postType: PostType) {
-    return this.blogService.createPost(postType);
+  async createPhotoPost(@Body() dto: CreatePhotoPostDto) {
+    return this.blogService.createPhotoPost(dto);
   }
 
   @Post('link')
-  async createLinkPost(@Param('postType') postType: PostType) {
-    return this.blogService.createPost(postType);
+  async createLinkPost(@Body() dto: CreateLinkPostDto) {
+    return this.blogService.createLinkPost(dto);
   }
 
   @Get()

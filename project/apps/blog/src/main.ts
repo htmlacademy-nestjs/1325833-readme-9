@@ -7,10 +7,13 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { BlogModule } from './app/blog.module';
 import { setupSwagger } from '@project/swagger';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(BlogModule);
+
   const globalPrefix = 'api';
+
   app.setGlobalPrefix(globalPrefix);
   app.useGlobalPipes(
     new ValidationPipe({
@@ -23,7 +26,8 @@ async function bootstrap() {
     })
   );
 
-  const port = process.env.PORT || 3000;
+  const configService = app.get(ConfigService);
+  const port = configService.get('application.port');
 
   setupSwagger(app);
 
