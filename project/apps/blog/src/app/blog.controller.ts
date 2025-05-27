@@ -1,4 +1,4 @@
-import { Controller, Post, Param, Get, Query, Body } from '@nestjs/common';
+import { Controller, Post, Get, Query, Body } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import {
   CreateLinkPostDto,
@@ -15,6 +15,7 @@ export class BlogController {
 
   @Post('video')
   async createVideoPost(@Body() dto: CreateVideoPostDto) {
+    console.log(dto);
     return this.blogService.createVideoPost(dto);
   }
 
