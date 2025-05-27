@@ -1,8 +1,10 @@
 import { IsTags, PostStatus } from '@project/core';
 import { Transform } from 'class-transformer';
+import { IsOptional } from 'class-validator';
 
 export class CreatePostDto {
-  status: PostStatus.DRAFT;
+  @IsOptional()
+  status: PostStatus = PostStatus.DRAFT;
 
   @IsTags()
   @Transform(({ value }) => {

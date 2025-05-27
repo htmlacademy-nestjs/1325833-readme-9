@@ -1,16 +1,12 @@
 import { Module } from '@nestjs/common';
 import { BlogController } from './blog.controller';
 import { BlogService } from './blog.service';
-import {
-  getJwtConfig,
-  JwtStrategy,
-  PrismaModule,
-  jwtConfig,
-} from '@project/core';
+import { getJwtConfig, PrismaModule, jwtConfig } from '@project/core';
 import { BlogRepository } from './blog.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { blogConfig } from './config';
+import { JwtStrategy } from './strategies';
 
 const ENV_BLOG_FILE_PATH = 'apps/blog/blog.env';
 

@@ -9,7 +9,8 @@ import {
 } from 'class-validator';
 
 export class CreateLinkPostDto extends CreatePostDto {
-  type: PostType.LINK;
+  @IsOptional()
+  type: PostType.LINK = PostType.LINK;
 
   @IsNotEmpty()
   @IsUrl()

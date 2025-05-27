@@ -1,9 +1,10 @@
 import { CreatePostDto } from './create-post.dto';
 import { PostType } from '@project/core';
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
 
 export class CreateQuotePostDto extends CreatePostDto {
-  type: PostType.QUOTE;
+  @IsOptional()
+  type: PostType.QUOTE = PostType.QUOTE;
 
   @IsNotEmpty()
   @IsString()
