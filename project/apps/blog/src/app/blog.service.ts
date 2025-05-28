@@ -5,11 +5,13 @@ import {
 } from '@nestjs/common';
 import { BlogRepository } from './blog.repository';
 import {
+  CommentPostDto,
   CreateLinkPostDto,
   CreatePhotoPostDto,
   CreateQuotePostDto,
   CreateTextPostDto,
   CreateVideoPostDto,
+  GetCommentsDto,
   GetPostsDto,
   UpdatePostDto,
 } from './dto';
@@ -42,7 +44,15 @@ export class BlogService {
     return this.blogRepository.findManyPosts(dto);
   }
 
-  async updatePost(dto: UpdatePostDto, postId: string, userId: string) {
+  async getPostById(id: string) {
+    return this.blogRepository.findPostById(id);
+  }
+
+  async repostPost(postId: string, userId: string) {
+    return this.blogRepository.updatePost();
+  }
+
+  async updatePost(dto: UpdatePostDto, postId: string, userId?: string) {
     return this.blogRepository.updatePost(dto, postId, userId);
   }
 
@@ -54,7 +64,7 @@ export class BlogService {
       );
 
       const like = existingLike
-        ? await this.blogRepository.deleteLike(existingLike.id)
+        ? await this.blogRepository.deleteLike(existingLike.id, userId)
         : await this.blogRepository.createLike(postId, userId);
 
       const post = await this.blogRepository.findPostById(postId);
@@ -69,14 +79,71 @@ export class BlogService {
             ? (post.likesCount -= 1)
             : (post.likesCount += 1),
         },
-        postId,
-        userId
+        postId
       );
 
       return like;
     } catch {
       throw new BadRequestException('Like failed');
     }
+  }
+
+  async commentPost(dto: CommentPostDto, postId: string, userId: string) {
+    try {
+      const comment = await this.blogRepository.createComment(
+        dto,
+        postId,
+        userId
+      );
+
+      const post = await this.blogRepository.findPostById(postId);
+
+      if (!post) {
+        throw new NotFoundException('Post not found');
+      }
+
+      await this.updatePost(
+        {
+          commentsCount: (post.commentsCount += 1),
+        },
+        postId
+      );
+
+      return comment;
+    } catch {
+      throw new BadRequestException('Comment failed');
+    }
+  }
+
+  async deleteComment(postId: string, commentId: string, userId: string) {
+    try {
+      const comment = await this.blogRepository.deleteComment(
+        commentId,
+        userId
+      );
+
+      const post = await this.blogRepository.findPostById(postId);
+
+      if (!post) {
+        throw new NotFoundException('Post not found');
+      }
+
+      await this.updatePost(
+        {
+          commentsCount: (post.commentsCount -= 1),
+        },
+        postId,
+        userId
+      );
+
+      return comment;
+    } catch {
+      throw new BadRequestException('Delete comment failed');
+    }
+  }
+
+  async getComments(dto: GetCommentsDto, postId: string) {
+    return this.blogRepository.findManyComments(dto, postId);
   }
 
   async deletePost(postId: string, userId: string) {

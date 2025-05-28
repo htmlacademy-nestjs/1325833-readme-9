@@ -10,11 +10,13 @@ import {
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import {
+  CommentPostDto,
   CreateLinkPostDto,
   CreatePhotoPostDto,
   CreateQuotePostDto,
   CreateTextPostDto,
   CreateVideoPostDto,
+  GetCommentsDto,
   GetPostsDto,
 } from './dto';
 import { CurrentUser, JwtAuthGuard, PostStatus } from '@project/core';
@@ -100,8 +102,46 @@ export class BlogController {
     return this.blogService.likePost(postId, userId);
   }
 
+  @Post('comment/:id')
+  @UseGuards(JwtAuthGuard)
+  async commentPost(
+    @Param('id') postId: string,
+    @Body() dto: CommentPostDto,
+    @CurrentUser('id') userId: string
+  ) {
+    return this.blogService.commentPost(dto, postId, userId);
+  }
+
+  @Delete('comment/:postId/:commentId')
+  @UseGuards(JwtAuthGuard)
+  async deleteComment(
+    @Param('postId') postId: string,
+    @Param('commentId') commentId: string,
+    @CurrentUser('id') userId: string
+  ) {
+    return this.blogService.deleteComment(postId, commentId, userId);
+  }
+
   @Get()
   async getPosts(@Query() dto: GetPostsDto) {
     return this.blogService.getPosts(dto);
+  }
+
+  @Get(':id')
+  async getPostById(@Param('id') id: string) {
+    return this.blogService.getPostById(id);
+  }
+
+  @Get('comment/:id')
+  async getComments(@Query() dto: GetCommentsDto, @Param('id') postId: string) {
+    return this.blogService.getComments(dto, postId);
+  }
+
+  @Post('repostPost/:id')
+  async repostPost(
+    @Param('id') postId: string,
+    @CurrentUser('id') userId: string
+  ) {
+    return this.blogService.repostPost(postId, userId);
   }
 }

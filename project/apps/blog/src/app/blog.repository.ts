@@ -9,6 +9,8 @@ import {
   CreateTextPostDto,
   CreateVideoPostDto,
   UpdatePostDto,
+  CommentPostDto,
+  GetCommentsDto,
 } from './dto';
 import { PostMapper } from './mappers';
 
@@ -73,7 +75,7 @@ export class BlogRepository {
     });
   }
 
-  async updatePost(dto: UpdatePostDto, postId: string, userId: string) {
+  async updatePost(dto: UpdatePostDto, postId: string, userId?: string) {
     return this.prismaService.post.update({
       where: {
         id: postId,
@@ -110,11 +112,38 @@ export class BlogRepository {
     });
   }
 
-  async deleteLike(id: string) {
+  async deleteLike(id: string, userId: string) {
     return this.prismaService.like.delete({
       where: {
         id,
+        userId,
       },
+    });
+  }
+
+  async createComment(dto: CommentPostDto, postId: string, userId: string) {
+    return this.prismaService.comment.create({
+      data: {
+        ...dto,
+        postId,
+        authorId: userId,
+      },
+    });
+  }
+
+  async deleteComment(id: string, userId: string) {
+    return this.prismaService.comment.delete({
+      where: { id, authorId: userId },
+    });
+  }
+
+  async findManyComments({ page, limit }: GetCommentsDto, postId: string) {
+    return this.prismaService.comment.findMany({
+      where: {
+        postId,
+      },
+      skip: ((page as number) - 1) * (limit as number),
+      take: limit,
     });
   }
 }
