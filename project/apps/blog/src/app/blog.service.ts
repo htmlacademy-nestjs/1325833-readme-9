@@ -13,27 +13,27 @@ import {
 export class BlogService {
   constructor(private readonly blogRepository: BlogRepository) {}
 
-  async createVideoPost(dto: CreateVideoPostDto) {
-    return dto;
+  async createVideoPost(dto: CreateVideoPostDto, userId: string) {
+    return this.blogRepository.create(dto, userId);
   }
 
-  async createTextPost(dto: CreateTextPostDto) {
-    return dto;
+  async createTextPost(dto: CreateTextPostDto, userId: string) {
+    return this.blogRepository.create(dto, userId);
   }
 
-  async createQuotePost(dto: CreateQuotePostDto) {
-    return dto;
+  async createQuotePost(dto: CreateQuotePostDto, userId: string) {
+    return this.blogRepository.create(dto, userId);
   }
 
-  async createPhotoPost(dto: CreatePhotoPostDto) {
-    return dto;
+  async createPhotoPost(dto: CreatePhotoPostDto, userId: string) {
+    return this.blogRepository.create(dto, userId);
   }
 
-  async createLinkPost(dto: CreateLinkPostDto) {
-    return dto;
+  async createLinkPost(dto: CreateLinkPostDto, userId: string) {
+    return this.blogRepository.create(dto, userId);
   }
 
   async getPosts(dto: GetPostsDto) {
-    return this.blogRepository.getPosts(dto);
+    return this.blogRepository.findMany(dto);
   }
 }

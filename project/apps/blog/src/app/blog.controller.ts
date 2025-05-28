@@ -20,39 +20,43 @@ export class BlogController {
     @Body() dto: CreateVideoPostDto,
     @CurrentUser('id') id: string
   ) {
-    return this.blogService.createVideoPost(dto);
+    return this.blogService.createVideoPost(dto, id);
   }
 
   @Post('text')
+  @UseGuards(JwtAuthGuard)
   async createTextPost(
     @Body() dto: CreateTextPostDto,
     @CurrentUser('id') id: string
   ) {
-    return this.blogService.createTextPost(dto);
+    return this.blogService.createTextPost(dto, id);
   }
 
   @Post('quote')
+  @UseGuards(JwtAuthGuard)
   async createQuotePost(
     @Body() dto: CreateQuotePostDto,
     @CurrentUser('id') id: string
   ) {
-    return this.blogService.createQuotePost(dto);
+    return this.blogService.createQuotePost(dto, id);
   }
 
   @Post('photo')
+  @UseGuards(JwtAuthGuard)
   async createPhotoPost(
     @Body() dto: CreatePhotoPostDto,
     @CurrentUser('id') id: string
   ) {
-    return this.blogService.createPhotoPost(dto);
+    return this.blogService.createPhotoPost(dto, id);
   }
 
   @Post('link')
+  @UseGuards(JwtAuthGuard)
   async createLinkPost(
     @Body() dto: CreateLinkPostDto,
     @CurrentUser('id') id: string
   ) {
-    return this.blogService.createLinkPost(dto);
+    return this.blogService.createLinkPost(dto, id);
   }
 
   @Get()
