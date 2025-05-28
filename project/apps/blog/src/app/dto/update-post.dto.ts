@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsDate, IsEnum, IsOptional } from 'class-validator';
 import { PostStatus } from '@project/core';
 
 export class UpdatePostDto {
@@ -11,4 +11,8 @@ export class UpdatePostDto {
   @IsOptional()
   @IsEnum(PostStatus)
   status?: PostStatus;
+
+  @IsOptional()
+  @IsDate()
+  publishedAt?: Date;
 }

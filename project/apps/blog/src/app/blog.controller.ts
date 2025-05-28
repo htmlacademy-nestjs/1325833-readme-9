@@ -76,14 +76,10 @@ export class BlogController {
   ) {
     const dto = {
       status: PostStatus.PUBLISHED,
+      publishedAt: new Date(),
     };
 
     return this.blogService.updatePost(dto, postId, userId);
-  }
-
-  @Get()
-  async getPosts(@Query() dto: GetPostsDto) {
-    return this.blogService.getPosts(dto);
   }
 
   @Delete(':id')
@@ -93,5 +89,19 @@ export class BlogController {
     @CurrentUser('id') userId: string
   ) {
     return this.blogService.deletePost(postId, userId);
+  }
+
+  @Post('like/:id')
+  @UseGuards(JwtAuthGuard)
+  async likePost(
+    @Param('id') postId: string,
+    @CurrentUser('id') userId: string
+  ) {
+    return this.blogService.likePost(postId, userId);
+  }
+
+  @Get()
+  async getPosts(@Query() dto: GetPostsDto) {
+    return this.blogService.getPosts(dto);
   }
 }

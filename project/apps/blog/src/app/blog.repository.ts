@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostSort, PrismaService, PostStatus } from '@project/core';
 import { Prisma } from '@prisma/client';
 import {
@@ -23,7 +23,14 @@ type CreatePostDto =
 export class BlogRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findMany({ page, limit, sort, type, authorId, tags }: GetPostsDto) {
+  async findManyPosts({
+    page,
+    limit,
+    sort,
+    type,
+    authorId,
+    tags,
+  }: GetPostsDto) {
     let orderBy: Prisma.PostOrderByWithRelationInput;
 
     switch (sort) {
@@ -50,6 +57,14 @@ export class BlogRepository {
     });
   }
 
+  async findPostById(id: string) {
+    return this.prismaService.post.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
+
   async createPost(dto: CreatePostDto, userId: string) {
     const data = PostMapper.toPrisma(dto, userId);
 
@@ -73,6 +88,32 @@ export class BlogRepository {
       where: {
         id: postId,
         authorId: userId,
+      },
+    });
+  }
+
+  async createLike(postId: string, userId: string) {
+    return this.prismaService.like.create({
+      data: {
+        postId,
+        userId,
+      },
+    });
+  }
+
+  async findLikeByUserAndPostId(postId: string, userId: string) {
+    return this.prismaService.like.findFirst({
+      where: {
+        postId,
+        userId,
+      },
+    });
+  }
+
+  async deleteLike(id: string) {
+    return this.prismaService.like.delete({
+      where: {
+        id,
       },
     });
   }

@@ -23,7 +23,6 @@ export class PostMapper {
       status: dto.status as unknown as PostStatus,
       tags: dto.tags,
       authorId: userId,
-      publishedAt: new Date(),
       ...this.getTypeSpecificFields(dto),
     };
   }
