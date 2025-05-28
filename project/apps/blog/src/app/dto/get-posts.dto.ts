@@ -36,12 +36,12 @@ export class GetPostsDto {
   @Transform(({ value }) => {
     return !value
       ? undefined
-      : [...new Set(value.map((tag: string) => tag.toLowerCase()))];
+      : [...new Set(JSON.parse(value).map((tag: string) => tag.toLowerCase()))];
   })
   tags?: string[];
 
   @IsOptional()
-  userId?: string;
+  authorId?: string;
 
   @IsOptional()
   @IsEnum(PostStatus)

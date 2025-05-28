@@ -8,7 +8,7 @@ docker compose --file ./apps/account/docker-compose.dev.yml --project-name "read
 docker compose --file ./apps/blog/docker-compose.dev.yml --project-name "readme-blog" --env-file ./apps/blog/blog.env up -d
 ```
 
-npx generate
+npx prisma generate
 
 npx prisma migrate dev --name init
 

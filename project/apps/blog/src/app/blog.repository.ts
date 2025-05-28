@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PostSort, PrismaService } from '@project/core';
-import { PostStatus, Prisma } from '@prisma/client';
+import { PostSort, PrismaService, PostStatus } from '@project/core';
+import { Prisma } from '@prisma/client';
 import {
   GetPostsDto,
   CreateLinkPostDto,
@@ -8,6 +8,7 @@ import {
   CreateQuotePostDto,
   CreateTextPostDto,
   CreateVideoPostDto,
+  UpdatePostDto,
 } from './dto';
 import { PostMapper } from './mappers';
 
@@ -22,7 +23,7 @@ type CreatePostDto =
 export class BlogRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findMany({ page, limit, sort, type, userId, tags }: GetPostsDto) {
+  async findMany({ page, limit, sort, type, authorId, tags }: GetPostsDto) {
     let orderBy: Prisma.PostOrderByWithRelationInput;
 
     switch (sort) {
@@ -39,8 +40,8 @@ export class BlogRepository {
     return this.prismaService.post.findMany({
       orderBy,
       where: {
+        authorId,
         type: type as any,
-        authorId: userId,
         tags: tags ? { hasSome: tags } : undefined,
         status: PostStatus.PUBLISHED,
       },
@@ -49,11 +50,30 @@ export class BlogRepository {
     });
   }
 
-  async create(dto: CreatePostDto, userId: string) {
+  async createPost(dto: CreatePostDto, userId: string) {
     const data = PostMapper.toPrisma(dto, userId);
 
     return this.prismaService.post.create({
       data,
+    });
+  }
+
+  async updatePost(dto: UpdatePostDto, postId: string, userId: string) {
+    return this.prismaService.post.update({
+      where: {
+        id: postId,
+        authorId: userId,
+      },
+      data: dto,
+    });
+  }
+
+  async deletePost(postId: string, userId: string) {
+    return this.prismaService.post.delete({
+      where: {
+        id: postId,
+        authorId: userId,
+      },
     });
   }
 }

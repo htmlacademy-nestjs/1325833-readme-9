@@ -1,4 +1,13 @@
-import { Controller, Post, Get, Query, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Query,
+  Body,
+  UseGuards,
+  Delete,
+  Param,
+} from '@nestjs/common';
 import { BlogService } from './blog.service';
 import {
   CreateLinkPostDto,
@@ -8,7 +17,7 @@ import {
   CreateVideoPostDto,
   GetPostsDto,
 } from './dto';
-import { CurrentUser, JwtAuthGuard } from '@project/core';
+import { CurrentUser, JwtAuthGuard, PostStatus } from '@project/core';
 
 @Controller('blog')
 export class BlogController {
@@ -59,9 +68,30 @@ export class BlogController {
     return this.blogService.createLinkPost(dto, id);
   }
 
+  @Post('publish/:id')
+  @UseGuards(JwtAuthGuard)
+  async publishPost(
+    @Param('id') postId: string,
+    @CurrentUser('id') userId: string
+  ) {
+    const dto = {
+      status: PostStatus.PUBLISHED,
+    };
+
+    return this.blogService.updatePost(dto, postId, userId);
+  }
+
   @Get()
   async getPosts(@Query() dto: GetPostsDto) {
-    console.log(dto);
     return this.blogService.getPosts(dto);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deletePost(
+    @Param('id') postId: string,
+    @CurrentUser('id') userId: string
+  ) {
+    return this.blogService.deletePost(postId, userId);
   }
 }

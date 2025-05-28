@@ -15,16 +15,16 @@ datasource db {
 }
 
 enum PostType {
-  VIDEO
-  TEXT
-  QUOTE
-  PHOTO
-  LINK
+  video
+  text
+  quote
+  photo
+  link
 }
 
 enum PostStatus {
-  PUBLISHED
-  DRAFT
+  published
+  draft
 }
 
 model Post {
