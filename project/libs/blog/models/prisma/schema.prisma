@@ -55,10 +55,8 @@ model Post {
   description String?
 
   // Связи внутри сервиса
-  comments     Comment[]
-  likes        Like[]
-  originalPost Post?     @relation("reposts", fields: [originalPostId], references: [id])
-  reposts      Post[]    @relation("reposts")
+  comments Comment[]
+  likes    Like[]
 
   @@index([authorId])
   @@index([createdAt])

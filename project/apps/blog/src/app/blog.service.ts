@@ -49,7 +49,27 @@ export class BlogService {
   }
 
   async repostPost(postId: string, userId: string) {
-    return this.blogRepository.updatePost();
+    const originalPost = await this.blogRepository.findPostById(postId);
+
+    if (!originalPost) {
+      throw new NotFoundException('Оригинальный пост не найден');
+    }
+
+    const { id, ...restOriginalPost } = originalPost;
+
+    return this.blogRepository.createPost(
+      {
+        ...restOriginalPost,
+        originalPostAuthorId: originalPost.authorId,
+        originalPostId: postId,
+        publishedAt: new Date(),
+        isRepost: true,
+        likesCount: 0,
+        commentsCount: 0,
+      } as any,
+      userId,
+      false
+    );
   }
 
   async updatePost(dto: UpdatePostDto, postId: string, userId?: string) {

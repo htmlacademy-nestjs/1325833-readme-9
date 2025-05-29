@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PostSort, PrismaService, PostStatus } from '@project/core';
-import { Prisma } from '@prisma/client';
+import { Post, Prisma } from '@prisma/client';
 import {
   GetPostsDto,
   CreateLinkPostDto,
@@ -11,6 +11,7 @@ import {
   UpdatePostDto,
   CommentPostDto,
   GetCommentsDto,
+  CreateRepostDto,
 } from './dto';
 import { PostMapper } from './mappers';
 
@@ -67,8 +68,10 @@ export class BlogRepository {
     });
   }
 
-  async createPost(dto: CreatePostDto, userId: string) {
-    const data = PostMapper.toPrisma(dto, userId);
+  async createPost(dto: CreatePostDto, userId: string, withMapper = true) {
+    const data = withMapper
+      ? PostMapper.toPrisma(dto, userId)
+      : (dto as Prisma.PostCreateInput);
 
     return this.prismaService.post.create({
       data,

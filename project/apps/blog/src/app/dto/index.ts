@@ -8,3 +8,4 @@ export * from './create-link-post.dto';
 export * from './update-post.dto';
 export * from './comment-post.dto';
 export * from './get-comments.dto';
+export * from './create-repost.dto';
