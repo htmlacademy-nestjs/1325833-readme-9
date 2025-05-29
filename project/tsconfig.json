@@ -23,6 +23,9 @@
     },
     {
       "path": "./apps/api-gateway"
+    },
+    {
+      "path": "./libs/blog/models"
     }
   ]
 }

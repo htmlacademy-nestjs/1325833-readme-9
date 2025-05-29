@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AccountModule } from './app/account.module';
 import { setupSwagger } from '@project/swagger';
@@ -8,7 +8,18 @@ async function bootstrap() {
   const app = await NestFactory.create(AccountModule);
 
   const globalPrefix = 'api';
+
   app.setGlobalPrefix(globalPrefix);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    })
+  );
 
   const configService = app.get(ConfigService);
   const port = configService.get('application.port');

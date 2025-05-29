@@ -1,38 +1,51 @@
 import { registerAs } from '@nestjs/config';
-import * as Joi from 'joi';
+import {
+  IsInt,
+  Min,
+  Max,
+  IsEnum,
+  validateOrReject,
+  ValidationError,
+} from 'class-validator';
+import { plainToClass, Transform } from 'class-transformer';
 
 const DEFAULT_PORT = 3000;
-const ENVIRONMENTS = ['development', 'production', 'stage'] as const;
 
-type Environment = (typeof ENVIRONMENTS)[number];
+enum Environment {
+  DEVELOPMENT = 'development',
+  PRODUCTION = 'production',
+  STAGE = 'stage',
+}
 
-export interface ApplicationConfig {
-  environment: string;
+export class ApplicationConfig {
+  @IsEnum(Environment)
+  @Transform(({ value }) => value || Environment.DEVELOPMENT)
+  environment: Environment;
+
+  @IsInt()
+  @Min(1)
+  @Max(65535)
+  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_PORT))
   port: number;
 }
 
-const validationSchema = Joi.object({
-  environment: Joi.string()
-    .valid(...ENVIRONMENTS)
-    .required(),
-  port: Joi.number().port().default(DEFAULT_PORT),
-});
+const getConfig = async () => {
+  const config = plainToClass(ApplicationConfig, {
+    environment: process.env.NODE_ENV,
+    port: process.env.PORT,
+  });
 
-const validateConfig = (config: ApplicationConfig) => {
-  const { error } = validationSchema.validate(config, { abortEarly: true });
+  try {
+    await validateOrReject(config);
+  } catch (errors) {
+    const errorMessages = (errors as ValidationError[]).flatMap((error) =>
+      Object.values(error.constraints || {})
+    );
 
-  if (error) {
-    throw new Error(`[Application Config Validation Error]: ${error.message}`);
+    throw new Error(
+      `[Application Config Validation Errors]: ${errorMessages.join('; ')}`
+    );
   }
-};
-
-const getConfig = (): ApplicationConfig => {
-  const config: ApplicationConfig = {
-    environment: process.env.NODE_ENV as Environment,
-    port: parseInt(process.env.PORT || `${DEFAULT_PORT}`, 10),
-  };
-
-  validateConfig(config);
 
   return config;
 };
