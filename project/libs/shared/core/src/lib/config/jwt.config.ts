@@ -13,23 +13,23 @@ const jwtValidationSchema = Joi.object({
   expiresIn: Joi.string().default(DEFAULT_JWT_EXPIRES_IN),
 });
 
-const validateJwtConfig = (config: JwtConfig) => {
-  const { error } = jwtValidationSchema.validate(config);
+const validateJwtConfig = (config: JwtConfig): JwtConfig => {
+  const { error, value } = jwtValidationSchema.validate(config);
 
   if (error) {
     throw new Error(`[Jwt Config Validation Error]: ${error.message}`);
   }
+
+  return value;
 };
 
 const getJwtConfig = (): JwtConfig => {
-  const config: JwtConfig = {
-    secret: process.env.JWT_SECRET!,
-    expiresIn: process.env.JWT_EXPIRES_IN ?? DEFAULT_JWT_EXPIRES_IN,
+  const rawConfig = {
+    secret: process.env.JWT_SECRET,
+    expiresIn: process.env.JWT_EXPIRES_IN,
   };
 
-  validateJwtConfig(config);
-
-  return config;
+  return validateJwtConfig(rawConfig as unknown as JwtConfig);
 };
 
 export default registerAs('jwt', getJwtConfig);

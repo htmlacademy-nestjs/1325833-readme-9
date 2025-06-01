@@ -13,27 +13,27 @@ const dbValidationSchema = Joi.object({
   authBase: Joi.string().required(),
 });
 
-const validateMongoConfig = (config: MongoConfig) => {
-  const { error } = dbValidationSchema.validate(config);
+const validateMongoConfig = (config: Record<string, any>): MongoConfig => {
+  const { error, value } = dbValidationSchema.validate(config);
 
   if (error) {
     throw new Error(`[DB Config Validation Error]: ${error.message}`);
   }
+
+  return value;
 };
 
 const getDbConfig = (): MongoConfig => {
-  const config: MongoConfig = {
-    host: process.env.MONGO_HOST as string,
-    name: process.env.MONGO_DB as string,
-    port: parseInt(process.env.MONGO_PORT ?? `${DEFAULT_MONGO_PORT}`, 10),
-    user: process.env.MONGO_USER as string,
-    password: process.env.MONGO_PASSWORD as string,
-    authBase: process.env.MONGO_AUTH_BASE as string,
+  const rawConfig = {
+    host: process.env.MONGO_HOST,
+    name: process.env.MONGO_DB,
+    port: process.env.MONGO_PORT,
+    user: process.env.MONGO_USER,
+    password: process.env.MONGO_PASSWORD,
+    authBase: process.env.MONGO_AUTH_BASE,
   };
 
-  validateMongoConfig(config);
-
-  return config;
+  return validateMongoConfig(rawConfig);
 };
 
 export default registerAs('db', getDbConfig);

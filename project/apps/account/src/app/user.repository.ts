@@ -28,16 +28,12 @@ export class UserRepository {
     dto: Omit<Partial<User>, 'id'>,
     id: string
   ): Promise<BaseResponse> {
-    let isUpdated = false;
-
     try {
       await this.userModel.findByIdAndUpdate(id, dto, { new: true }).exec();
 
-      isUpdated = true;
+      return { isSuccess: true };
     } catch {
-      // ignore
+      return { isSuccess: false };
     }
-
-    return { isSuccess: isUpdated };
   }
 }

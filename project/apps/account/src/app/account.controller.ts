@@ -10,10 +10,9 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AccountService } from './account.service';
 import { ChangeUserPasswordDto, CreateUserDto, LoginUserDto } from './dto';
-import { CurrentUser } from '@project/core';
+import { CurrentUser, JwtAuthGuard } from '@project/core';
 import {
   RegisterSwaggerDecorator,
   LoginSwaggerDecorator,

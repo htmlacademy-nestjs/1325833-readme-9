@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PostType {
+  video
+  text
+  quote
+  photo
+  link
+}
+
+enum PostStatus {
+  published
+  draft
+}
+
+model Post {
+  id             String     @id @default(uuid())
+  type           PostType
+  status         PostStatus
+  tags           String[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  publishedAt    DateTime   @default(now())
+  isRepost       Boolean    @default(false)
+  likesCount     Int        @default(0)
+  commentsCount  Int        @default(0)
+  originalPostId String?
+
+  // ID пользователя из внешнего сервиса
+  authorId             String
+  originalPostAuthorId String?
+
+  // Общие поля для типов постов
+  title       String?
+  content     String?
+  videoUrl    String?
+  preview     String?
+  quoteAuthor String?
+  photo       String?
+  link        String?
+  description String?
+
+  // Связи внутри сервиса
+  comments Comment[]
+  likes    Like[]
+
+  @@index([authorId])
+  @@index([createdAt])
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+
+  // ID пользователя из внешнего сервиса
+  authorId String
+
+  @@index([postId])
+  @@map("comments")
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+
+  // ID пользователя из внешнего сервиса
+  userId String
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@map("likes")
+}
