@@ -15,17 +15,17 @@ export class GetPostsDto {
   @IsOptional()
   @IsInt()
   @Min(DEFAULT_POSTS_PAGE)
-  page?: number = DEFAULT_POSTS_PAGE;
+  page: number = DEFAULT_POSTS_PAGE;
 
   @IsOptional()
   @IsInt()
   @Min(MIN_POSTS_LIMIT)
   @Max(MAX_POSTS_LIMIT)
-  limit?: number = DEFAULT_POSTS_LIMIT;
+  limit: number = DEFAULT_POSTS_LIMIT;
 
   @IsOptional()
   @IsEnum(PostSort)
-  sort?: PostSort = PostSort.DATE;
+  sort: PostSort = PostSort.DATE;
 
   @IsOptional()
   @IsEnum(PostType)

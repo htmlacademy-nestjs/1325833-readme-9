@@ -1,12 +1,12 @@
 import { PostType } from '@project/core';
 import { CreatePostDto } from './create-post.dto';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsUrl } from 'class-validator';
 
 export class CreatePhotoPostDto extends CreatePostDto {
   @IsOptional()
-  type: PostType.PHOTO = PostType.PHOTO;
+  @IsEnum(PostType)
+  override type: PostType.PHOTO = PostType.PHOTO;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsUrl()
   photoUrl: string;
 }

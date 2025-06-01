@@ -1,18 +1,12 @@
 import { PostType } from '@project/core';
 import { CreatePostDto } from './create-post.dto';
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUrl,
-  Length,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUrl, Length } from 'class-validator';
 
 export class CreateLinkPostDto extends CreatePostDto {
   @IsOptional()
-  type: PostType.LINK = PostType.LINK;
+  @IsEnum(PostType)
+  override type: PostType.LINK = PostType.LINK;
 
-  @IsNotEmpty()
   @IsUrl()
   link: string;
 

@@ -137,7 +137,7 @@ export class BlogController {
     return this.blogService.getComments(dto, postId);
   }
 
-  @Post('repostPost/:id')
+  @Post('repost-post/:id')
   async repostPost(
     @Param('id') postId: string,
     @CurrentUser('id') userId: string

@@ -13,7 +13,7 @@ const dbValidationSchema = Joi.object({
   authBase: Joi.string().required(),
 });
 
-const validateMongoConfig = (config: MongoConfig): MongoConfig => {
+const validateMongoConfig = (config: Record<string, any>): MongoConfig => {
   const { error, value } = dbValidationSchema.validate(config);
 
   if (error) {
@@ -33,7 +33,7 @@ const getDbConfig = (): MongoConfig => {
     authBase: process.env.MONGO_AUTH_BASE,
   };
 
-  return validateMongoConfig(rawConfig as unknown as MongoConfig);
+  return validateMongoConfig(rawConfig);
 };
 
 export default registerAs('db', getDbConfig);
