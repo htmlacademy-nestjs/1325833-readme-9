@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PostSort, PrismaService, PostStatus } from '@project/core';
-import { Post, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import {
   GetPostsDto,
   CreateLinkPostDto,
@@ -11,7 +11,6 @@ import {
   UpdatePostDto,
   CommentPostDto,
   GetCommentsDto,
-  CreateRepostDto,
 } from './dto';
 import { PostMapper } from './mappers';
 
@@ -156,6 +155,28 @@ export class BlogRepository {
       },
       skip: ((page as number) - 1) * (limit as number),
       take: limit,
+    });
+  }
+
+  async searchPosts(query: string) {
+    if (!query || !query.trim().length) {
+      return [];
+    }
+
+    const searchTerms = query
+      .trim()
+      .split(/\s+/)
+      .filter((term) => term.length > 0);
+
+    return this.prismaService.post.findMany({
+      where: {
+        status: PostStatus.PUBLISHED,
+        title: { not: null },
+        OR: searchTerms.map((term) => ({
+          title: { contains: term, mode: 'insensitive' },
+        })),
+      },
+      take: 20,
     });
   }
 }

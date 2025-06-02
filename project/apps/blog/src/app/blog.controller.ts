@@ -1,12 +1,12 @@
 import {
-  Controller,
-  Post,
-  Get,
-  Query,
   Body,
-  UseGuards,
+  Controller,
   Delete,
+  Get,
   Param,
+  Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import {
@@ -19,7 +19,15 @@ import {
   GetCommentsDto,
   GetPostsDto,
 } from './dto';
-import { CurrentUser, JwtAuthGuard, PostStatus } from '@project/core';
+import { CurrentUser, JwtAuthGuard, PostStatus, PostType } from '@project/core';
+import { CreatePostSwaggerDecorator } from './swagger';
+import {
+  CreateLinkPostRdo,
+  CreatePhotoPostRdo,
+  CreateQuotePostRdo,
+  CreateTextPostRdo,
+  CreateVideoPostRdo,
+} from './rdo';
 
 @Controller('blog')
 export class BlogController {
@@ -27,6 +35,7 @@ export class BlogController {
 
   @Post('video')
   @UseGuards(JwtAuthGuard)
+  @CreatePostSwaggerDecorator(PostType.VIDEO, CreateVideoPostRdo)
   async createVideoPost(
     @Body() dto: CreateVideoPostDto,
     @CurrentUser('id') id: string
@@ -36,6 +45,7 @@ export class BlogController {
 
   @Post('text')
   @UseGuards(JwtAuthGuard)
+  @CreatePostSwaggerDecorator(PostType.TEXT, CreateTextPostRdo)
   async createTextPost(
     @Body() dto: CreateTextPostDto,
     @CurrentUser('id') id: string
@@ -45,6 +55,7 @@ export class BlogController {
 
   @Post('quote')
   @UseGuards(JwtAuthGuard)
+  @CreatePostSwaggerDecorator(PostType.QUOTE, CreateQuotePostRdo)
   async createQuotePost(
     @Body() dto: CreateQuotePostDto,
     @CurrentUser('id') id: string
@@ -54,6 +65,7 @@ export class BlogController {
 
   @Post('photo')
   @UseGuards(JwtAuthGuard)
+  @CreatePostSwaggerDecorator(PostType.PHOTO, CreatePhotoPostRdo)
   async createPhotoPost(
     @Body() dto: CreatePhotoPostDto,
     @CurrentUser('id') id: string
@@ -63,6 +75,7 @@ export class BlogController {
 
   @Post('link')
   @UseGuards(JwtAuthGuard)
+  @CreatePostSwaggerDecorator(PostType.LINK, CreateLinkPostRdo)
   async createLinkPost(
     @Body() dto: CreateLinkPostDto,
     @CurrentUser('id') id: string
@@ -88,6 +101,11 @@ export class BlogController {
     };
 
     return this.blogService.updatePost(dto, postId, userId);
+  }
+
+  @Get('search')
+  async searchPosts(@Query('query') query: string) {
+    return this.blogService.searchPosts(query);
   }
 
   @Delete(':id')

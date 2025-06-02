@@ -17,7 +17,6 @@ import {
   UpdatePostDto,
 } from './dto';
 import { BlogExceptions } from './constants';
-import { PostStatus } from '@project/core';
 
 @Injectable()
 export class BlogService {
@@ -179,5 +178,9 @@ export class BlogService {
 
   async deletePost(postId: string, userId: string) {
     return this.blogRepository.deletePost(postId, userId);
+  }
+
+  async searchPosts(query: string) {
+    return this.blogRepository.searchPosts(query);
   }
 }
