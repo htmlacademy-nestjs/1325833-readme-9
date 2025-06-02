@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,6 +16,8 @@ import {
   GetPostsDto,
   UpdatePostDto,
 } from './dto';
+import { BlogExceptions } from './constants';
+import { PostStatus } from '@project/core';
 
 @Injectable()
 export class BlogService {
@@ -44,6 +47,10 @@ export class BlogService {
     return this.blogRepository.findManyPosts(dto);
   }
 
+  async getMyDrafts(userId: string) {
+    return this.blogRepository.findDraftsPosts(userId);
+  }
+
   async getPostById(id: string) {
     return this.blogRepository.findPostById(id);
   }
@@ -52,7 +59,11 @@ export class BlogService {
     const originalPost = await this.blogRepository.findPostById(postId);
 
     if (!originalPost) {
-      throw new NotFoundException('Оригинальный пост не найден');
+      throw new NotFoundException(BlogExceptions.ORIGINAL_POST_NOT_FOUND);
+    }
+
+    if (originalPost.isRepost) {
+      throw new ConflictException(BlogExceptions.REPOST_CANT_REPOST);
     }
 
     const { id, ...restOriginalPost } = originalPost;

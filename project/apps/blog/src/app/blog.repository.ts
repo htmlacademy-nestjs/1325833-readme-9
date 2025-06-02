@@ -60,6 +60,15 @@ export class BlogRepository {
     });
   }
 
+  async findDraftsPosts(userId: string) {
+    return this.prismaService.post.findMany({
+      where: {
+        authorId: userId,
+        status: PostStatus.DRAFT,
+      },
+    });
+  }
+
   async findPostById(id: string) {
     return this.prismaService.post.findFirst({
       where: {

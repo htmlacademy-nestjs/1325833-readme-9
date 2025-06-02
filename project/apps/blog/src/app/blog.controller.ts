@@ -70,6 +70,12 @@ export class BlogController {
     return this.blogService.createLinkPost(dto, id);
   }
 
+  @Get('my-drafts')
+  @UseGuards(JwtAuthGuard)
+  async getMyDrafts(@CurrentUser('id') userId: string) {
+    return this.blogService.getMyDrafts(userId);
+  }
+
   @Post('publish/:id')
   @UseGuards(JwtAuthGuard)
   async publishPost(
