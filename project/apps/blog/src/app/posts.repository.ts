@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PostSort, PrismaService, PostStatus } from '@project/core';
-import { Prisma } from '@prisma/client';
+import { PostSort, PostStatus, PrismaService } from '@project/core';
 import {
-  GetPostsDto,
   CreateLinkPostDto,
   CreatePhotoPostDto,
   CreateQuotePostDto,
   CreateTextPostDto,
   CreateVideoPostDto,
+  GetPostsDto,
   UpdatePostDto,
-  CommentPostDto,
-  GetCommentsDto,
 } from './dto';
+import { Prisma } from '@prisma/client';
 import { PostMapper } from './mappers';
 
 type CreatePostDto =
@@ -22,7 +20,7 @@ type CreatePostDto =
   | CreateVideoPostDto;
 
 @Injectable()
-export class BlogRepository {
+export class PostsRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findManyPosts({
@@ -59,23 +57,6 @@ export class BlogRepository {
     });
   }
 
-  async findDraftsPosts(userId: string) {
-    return this.prismaService.post.findMany({
-      where: {
-        authorId: userId,
-        status: PostStatus.DRAFT,
-      },
-    });
-  }
-
-  async findPostById(id: string) {
-    return this.prismaService.post.findFirst({
-      where: {
-        id,
-      },
-    });
-  }
-
   async createPost(dto: CreatePostDto, userId: string, withMapper = true) {
     const data = withMapper
       ? PostMapper.toPrisma(dto, userId)
@@ -105,6 +86,23 @@ export class BlogRepository {
     });
   }
 
+  async findDraftsPosts(userId: string) {
+    return this.prismaService.post.findMany({
+      where: {
+        authorId: userId,
+        status: PostStatus.DRAFT,
+      },
+    });
+  }
+
+  async findPostById(id: string) {
+    return this.prismaService.post.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
+
   async createLike(postId: string, userId: string) {
     return this.prismaService.like.create({
       data: {
@@ -129,32 +127,6 @@ export class BlogRepository {
         id,
         userId,
       },
-    });
-  }
-
-  async createComment(dto: CommentPostDto, postId: string, userId: string) {
-    return this.prismaService.comment.create({
-      data: {
-        ...dto,
-        postId,
-        authorId: userId,
-      },
-    });
-  }
-
-  async deleteComment(id: string, userId: string) {
-    return this.prismaService.comment.delete({
-      where: { id, authorId: userId },
-    });
-  }
-
-  async findManyComments({ page, limit }: GetCommentsDto, postId: string) {
-    return this.prismaService.comment.findMany({
-      where: {
-        postId,
-      },
-      skip: ((page as number) - 1) * (limit as number),
-      take: limit,
     });
   }
 
