@@ -12,6 +12,7 @@ export class CreateQuotePostRdo extends CreatePostRdo {
   })
   type: PostType.QUOTE;
 
+  @Expose()
   @ApiProperty({
     example: 'Reason is powerless before the cry of the heart',
     description: 'Quote text',
@@ -20,6 +21,7 @@ export class CreateQuotePostRdo extends CreatePostRdo {
   })
   quoteText: string;
 
+  @Expose()
   @ApiProperty({
     example: 'Kendrick Lamar',
     description: 'Author of quote',

@@ -12,6 +12,7 @@ export class CreateTextPostRdo extends CreatePostRdo {
   })
   type: PostType.TEXT;
 
+  @Expose()
   @ApiProperty({
     example: 'Big post',
     description: 'Post title',
@@ -20,6 +21,7 @@ export class CreateTextPostRdo extends CreatePostRdo {
   })
   title: string;
 
+  @Expose()
   @ApiProperty({
     example: 'Post',
     description: 'Post preview',
@@ -28,6 +30,7 @@ export class CreateTextPostRdo extends CreatePostRdo {
   })
   preview: string;
 
+  @Expose()
   @ApiProperty({
     example:
       'This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post',

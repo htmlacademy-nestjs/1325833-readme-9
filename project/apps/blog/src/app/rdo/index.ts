@@ -4,3 +4,4 @@ export * from './create-text-post.rdo';
 export * from './create-quote-post.rdo';
 export * from './create-photo-post.rdo';
 export * from './create-link-post.rdo';
+export * from './common-post.rdo';

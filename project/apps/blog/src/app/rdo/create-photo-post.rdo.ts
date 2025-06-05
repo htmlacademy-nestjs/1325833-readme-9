@@ -12,6 +12,7 @@ export class CreatePhotoPostRdo extends CreatePostRdo {
   })
   type: PostType.PHOTO;
 
+  @Expose()
   @ApiProperty({
     example: 'https://example.com/photo',
     description: 'Photo url',

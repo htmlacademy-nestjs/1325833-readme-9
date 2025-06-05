@@ -12,12 +12,14 @@ export class CreateLinkPostRdo extends CreatePostRdo {
   })
   type: PostType.LINK;
 
+  @Expose()
   @ApiProperty({
     example: 'https://example.com/link',
     description: 'Link',
   })
   link: string;
 
+  @Expose()
   @ApiProperty({
     example: 'This is just a link',
     description: 'The link description',

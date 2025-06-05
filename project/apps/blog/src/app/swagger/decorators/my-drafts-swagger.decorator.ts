@@ -1,18 +1,18 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { PostType } from '@project/core';
+import { CommonPostRdo } from '../../rdo';
 
-export const CreatePostSwaggerDecorator = (postType: PostType, rdo: any) =>
+export const MyDraftsSwaggerDecorator = () =>
   applyDecorators(
     ApiBearerAuth(),
-    ApiOperation({
-      summary: `Create ${postType} post`,
-      description: `Create post with ${postType} type`,
-    }),
     ApiResponse({
-      type: rdo,
-      status: HttpStatus.CREATED,
-      description: 'Post created successfully',
+      type: CommonPostRdo,
+      status: HttpStatus.OK,
+      description: 'Posts fetch successfully',
+    }),
+    ApiOperation({
+      summary: 'Get my drafts',
+      description: 'Get current user drafts',
     }),
     ApiResponse({
       status: HttpStatus.UNAUTHORIZED,

@@ -8,8 +8,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CurrentUser, JwtAuthGuard, PostStatus, PostType } from '@project/core';
-import { CreatePostSwaggerDecorator } from './swagger';
 import {
+  CreatePostSwaggerDecorator,
+  MyDraftsSwaggerDecorator,
+  PublishPostSwaggerDecorator,
+} from './swagger';
+import {
+  CommonPostRdo,
   CreateLinkPostRdo,
   CreatePhotoPostRdo,
   CreateQuotePostRdo,
@@ -35,7 +40,7 @@ export class PostsWithGuardsController {
   async createVideoPost(
     @Body() dto: CreateVideoPostDto,
     @CurrentUser('id') id: string
-  ) {
+  ): Promise<CreateVideoPostRdo> {
     return this.postsService.createVideoPost(dto, id);
   }
 
@@ -44,7 +49,7 @@ export class PostsWithGuardsController {
   async createTextPost(
     @Body() dto: CreateTextPostDto,
     @CurrentUser('id') id: string
-  ) {
+  ): Promise<CreateTextPostRdo> {
     return this.postsService.createTextPost(dto, id);
   }
 
@@ -53,7 +58,7 @@ export class PostsWithGuardsController {
   async createQuotePost(
     @Body() dto: CreateQuotePostDto,
     @CurrentUser('id') id: string
-  ) {
+  ): Promise<CreateQuotePostRdo> {
     return this.postsService.createQuotePost(dto, id);
   }
 
@@ -62,7 +67,7 @@ export class PostsWithGuardsController {
   async createPhotoPost(
     @Body() dto: CreatePhotoPostDto,
     @CurrentUser('id') id: string
-  ) {
+  ): Promise<CreatePhotoPostRdo> {
     return this.postsService.createPhotoPost(dto, id);
   }
 
@@ -71,20 +76,24 @@ export class PostsWithGuardsController {
   async createLinkPost(
     @Body() dto: CreateLinkPostDto,
     @CurrentUser('id') id: string
-  ) {
+  ): Promise<CreateLinkPostRdo> {
     return this.postsService.createLinkPost(dto, id);
   }
 
   @Get('my-drafts')
-  async getMyDrafts(@CurrentUser('id') userId: string) {
+  @MyDraftsSwaggerDecorator()
+  async getMyDrafts(
+    @CurrentUser('id') userId: string
+  ): Promise<CommonPostRdo[]> {
     return this.postsService.getMyDrafts(userId);
   }
 
   @Post('publish/:id')
+  @PublishPostSwaggerDecorator()
   async publishPost(
     @Param('id') postId: string,
     @CurrentUser('id') userId: string
-  ) {
+  ): Promise<CommonPostRdo> {
     const dto = {
       status: PostStatus.PUBLISHED,
       publishedAt: new Date(),
