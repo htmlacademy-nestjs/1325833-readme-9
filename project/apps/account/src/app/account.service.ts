@@ -76,7 +76,12 @@ export class AccountService {
     const refreshTokenId = uuidv4();
     await this.userRepository.updateRefreshTokenId(user.id, refreshTokenId);
 
-    return this.generateTokens(user.id, refreshTokenId);
+    const { passwordHash, _id: userId, ...restUser } = user;
+
+    return this.generateTokens(user.id, refreshTokenId, {
+      id: userId,
+      ...restUser,
+    });
   }
 
   async refreshTokens(dto: RefreshTokenDto): Promise<RefreshRdo> {
@@ -107,7 +112,12 @@ export class AccountService {
     const newRefreshTokenId = uuidv4();
     await this.userRepository.updateRefreshTokenId(user.id, newRefreshTokenId);
 
-    return this.generateTokens(user.id, newRefreshTokenId);
+    const { passwordHash, _id: userId, ...restUser } = user;
+
+    return this.generateTokens(user.id, newRefreshTokenId, {
+      id: userId,
+      ...restUser,
+    });
   }
 
   async getUser(id: string): Promise<GetUserRdo> {
@@ -162,9 +172,10 @@ export class AccountService {
     await this.userRepository.updateRefreshTokenId(userId, null);
   }
 
-  private async generateTokens(
+  private async generateTokens<T>(
     userId: string,
-    refreshTokenId: string
+    refreshTokenId: string,
+    refreshTokenData: T
   ): Promise<LoginRdo> {
     const payload = {
       sub: userId,
@@ -172,9 +183,12 @@ export class AccountService {
     };
 
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        expiresIn: TokenExpirations.ACCESS_TOKEN,
-      }),
+      this.jwtService.signAsync(
+        { ...payload, ...refreshTokenData },
+        {
+          expiresIn: TokenExpirations.ACCESS_TOKEN,
+        }
+      ),
       this.jwtService.signAsync(payload, {
         expiresIn: TokenExpirations.REFRESH_TOKEN,
       }),

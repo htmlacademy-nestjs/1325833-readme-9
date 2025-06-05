@@ -41,6 +41,8 @@ export class UserRepository {
     userId: string,
     refreshTokenId: string | null
   ): Promise<void> {
-    await this.userModel.findByIdAndUpdate(userId, { refreshTokenId }).exec();
+    await this.userModel
+      .findByIdAndUpdate(userId, { refreshTokenId }, { new: true })
+      .exec();
   }
 }
