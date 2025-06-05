@@ -1,3 +1,5 @@
 export interface AuthUser {
-  jwt: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: string;
 }

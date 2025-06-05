@@ -9,9 +9,15 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { AccountService } from './account.service';
-import { ChangeUserPasswordDto, CreateUserDto, LoginUserDto } from './dto';
+import {
+  ChangeUserPasswordDto,
+  CreateUserDto,
+  LoginUserDto,
+  RefreshTokenDto,
+} from './dto';
 import { CurrentUser, JwtAuthGuard } from '@project/core';
 import {
   RegisterSwaggerDecorator,
@@ -54,5 +60,17 @@ export class AccountController {
     @CurrentUser('id') id: string
   ): Promise<ChangePasswordRdo> {
     return this.accountService.changePassword(dto, id);
+  }
+
+  @Post('refresh')
+  @UseGuards(JwtAuthGuard)
+  async refreshTokens(@Body() dto: RefreshTokenDto) {
+    return this.accountService.refreshTokens(dto);
+  }
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout(@CurrentUser('id') id: string) {
+    return this.accountService.logout(id);
   }
 }

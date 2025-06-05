@@ -47,6 +47,12 @@ export class UserEntity extends Document implements Omit<User, 'id'> {
   })
   postsCount: number;
 
+  @Prop({
+    type: String,
+    default: null,
+  })
+  refreshTokenId: string;
+
   @Prop()
   avatar?: string;
 }
