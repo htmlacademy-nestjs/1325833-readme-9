@@ -36,4 +36,11 @@ export class UserRepository {
       return { isSuccess: false };
     }
   }
+
+  async updateRefreshTokenId(
+    userId: string,
+    refreshTokenId: string | null
+  ): Promise<void> {
+    await this.userModel.findByIdAndUpdate(userId, { refreshTokenId }).exec();
+  }
 }
