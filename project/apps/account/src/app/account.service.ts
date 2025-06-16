@@ -74,11 +74,12 @@ export class AccountService {
     }
 
     const refreshTokenId = uuidv4();
-    await this.userRepository.updateRefreshTokenId(user.id, refreshTokenId);
+
+    await this.userRepository.updateRefreshTokenId(user._id, refreshTokenId);
 
     const { passwordHash, _id: userId, ...restUser } = user;
 
-    return this.generateTokens(user.id, refreshTokenId, {
+    return this.generateTokens(user._id, refreshTokenId, {
       id: userId,
       ...restUser,
     });
@@ -110,11 +111,11 @@ export class AccountService {
     }
 
     const newRefreshTokenId = uuidv4();
-    await this.userRepository.updateRefreshTokenId(user.id, newRefreshTokenId);
+    await this.userRepository.updateRefreshTokenId(user._id, newRefreshTokenId);
 
     const { passwordHash, _id: userId, ...restUser } = user;
 
-    return this.generateTokens(user.id, newRefreshTokenId, {
+    return this.generateTokens(user._id, newRefreshTokenId, {
       id: userId,
       ...restUser,
     });
@@ -184,7 +185,7 @@ export class AccountService {
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
-        { ...payload, ...refreshTokenData },
+        { ...payload, ...refreshTokenData, refreshTokenId: payload.jti },
         {
           expiresIn: TokenExpirations.ACCESS_TOKEN,
         }
