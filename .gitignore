@@ -14,4 +14,6 @@ coverage
 # env
 account.env
 blog.env
+files-storage.env
 .env
+**/uploads/*
