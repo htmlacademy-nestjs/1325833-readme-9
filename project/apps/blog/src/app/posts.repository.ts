@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { PostSort, PrismaService, PostStatus } from '@project/core';
-import { Post, Prisma } from '@prisma/client';
+import { PostSort, PostStatus, PrismaService } from '@project/core';
 import {
-  GetPostsDto,
   CreateLinkPostDto,
   CreatePhotoPostDto,
   CreateQuotePostDto,
   CreateTextPostDto,
   CreateVideoPostDto,
+  GetPostsDto,
   UpdatePostDto,
-  CommentPostDto,
-  GetCommentsDto,
-  CreateRepostDto,
 } from './dto';
+import { Prisma } from '@prisma/client';
 import { PostMapper } from './mappers';
 
 type CreatePostDto =
@@ -23,7 +20,7 @@ type CreatePostDto =
   | CreateVideoPostDto;
 
 @Injectable()
-export class BlogRepository {
+export class PostsRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findManyPosts({
@@ -60,14 +57,6 @@ export class BlogRepository {
     });
   }
 
-  async findPostById(id: string) {
-    return this.prismaService.post.findFirst({
-      where: {
-        id,
-      },
-    });
-  }
-
   async createPost(dto: CreatePostDto, userId: string, withMapper = true) {
     const data = withMapper
       ? PostMapper.toPrisma(dto, userId)
@@ -93,6 +82,23 @@ export class BlogRepository {
       where: {
         id: postId,
         authorId: userId,
+      },
+    });
+  }
+
+  async findDraftsPosts(userId: string) {
+    return this.prismaService.post.findMany({
+      where: {
+        authorId: userId,
+        status: PostStatus.DRAFT,
+      },
+    });
+  }
+
+  async findPostById(id: string) {
+    return this.prismaService.post.findFirst({
+      where: {
+        id,
       },
     });
   }
@@ -124,29 +130,25 @@ export class BlogRepository {
     });
   }
 
-  async createComment(dto: CommentPostDto, postId: string, userId: string) {
-    return this.prismaService.comment.create({
-      data: {
-        ...dto,
-        postId,
-        authorId: userId,
-      },
-    });
-  }
+  async searchPosts(query: string) {
+    if (!query.trim()) {
+      return [];
+    }
 
-  async deleteComment(id: string, userId: string) {
-    return this.prismaService.comment.delete({
-      where: { id, authorId: userId },
-    });
-  }
+    const searchTerms = query
+      .trim()
+      .split(/\s+/)
+      .filter((term) => term.length > 0);
 
-  async findManyComments({ page, limit }: GetCommentsDto, postId: string) {
-    return this.prismaService.comment.findMany({
+    return this.prismaService.post.findMany({
       where: {
-        postId,
+        status: PostStatus.PUBLISHED,
+        title: { not: null },
+        OR: searchTerms.map((term) => ({
+          title: { contains: term, mode: 'insensitive' },
+        })),
       },
-      skip: ((page as number) - 1) * (limit as number),
-      take: limit,
+      take: 20,
     });
   }
 }

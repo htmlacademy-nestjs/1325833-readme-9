@@ -2,7 +2,7 @@ import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { AuthUser } from '../types';
 
-export class LoginRdo implements AuthUser {
+export class RefreshRdo implements AuthUser {
   @Expose()
   @ApiProperty({
     example:
