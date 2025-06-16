@@ -131,7 +131,7 @@ export class PostsRepository {
   }
 
   async searchPosts(query: string) {
-    if (!query || !query.trim().length) {
+    if (!query.trim()) {
       return [];
     }
 

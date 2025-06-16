@@ -18,7 +18,7 @@ export class CreatePostDto {
       : [...new Set(value.map((tag: string) => tag.toLowerCase()))];
   })
   @ApiProperty({
-    example: `['cats', 'IT']`,
+    example: ['cats', 'IT'],
     description: 'Post tags',
     required: false,
   })
