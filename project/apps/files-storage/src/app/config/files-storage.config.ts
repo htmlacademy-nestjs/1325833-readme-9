@@ -58,6 +58,9 @@ export class ApplicationConfig {
   @IsString()
   uploadDirectory: string;
 
+  @IsString()
+  serveRoot: string;
+
   @ValidateNested()
   @Type(() => DbConfig)
   db: DbConfig;
@@ -68,6 +71,7 @@ const getConfig = async () => {
     environment: process.env.NODE_ENV,
     port: process.env.PORT,
     uploadDirectory: process.env.UPLOAD_DIRECTORY_PATH,
+    serveRoot: process.env.SERVE_ROOT,
     db: {
       host: process.env.MONGO_HOST,
       port: process.env.MONGO_PORT,
