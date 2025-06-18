@@ -1,7 +1,6 @@
 import 'multer';
 import { type Express } from 'express';
 import {
-  BadRequestException,
   Controller,
   Get,
   Param,
@@ -13,8 +12,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesStorageService } from './files-storage.service';
-import { FilesStorageExceptions } from './constants';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Files')
 @Controller('files')
 export class FilesStorageController {
   constructor(private readonly filesStorageService: FilesStorageService) {}
@@ -31,10 +31,6 @@ export class FilesStorageController {
     )
     file: Express.Multer.File
   ) {
-    if (!file) {
-      throw new BadRequestException(FilesStorageExceptions.FILE_NOT_PROVIDED);
-    }
-
     return this.filesStorageService.saveFile(file);
   }
 

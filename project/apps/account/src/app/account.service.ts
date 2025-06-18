@@ -39,7 +39,6 @@ export class AccountService {
     }
 
     const passwordHash = await this.hashPassword(dto.password);
-    const refreshTokenId = uuidv4();
 
     const { password, ...restDto } = dto;
     const newUserPayload = {

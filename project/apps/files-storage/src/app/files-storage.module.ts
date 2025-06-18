@@ -7,6 +7,7 @@ import { FilesStorageRepository } from './files-storage.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { getMongooseOptions } from './mongo';
 import { FileEntity, FileSchema } from './entities';
+import { FilesStorageController } from './files-storage.controller';
 
 const ENV_FILE_PATH = 'apps/files-storage/files-storage.env';
 
@@ -31,6 +32,7 @@ const ENV_FILE_PATH = 'apps/files-storage/files-storage.env';
     MongooseModule.forRootAsync(getMongooseOptions()),
     MongooseModule.forFeature([{ name: FileEntity.name, schema: FileSchema }]),
   ],
+  controllers: [FilesStorageController],
   providers: [FilesStorageService, FilesStorageRepository, ConfigService],
 })
 export class FilesStorageModule {}

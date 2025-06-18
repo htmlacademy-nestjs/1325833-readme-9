@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ConfigService } from '@nestjs/config';
 import { FilesStorageRepository } from './files-storage.repository';
-import { FileEntity } from './entities';
+import { FilesStorageExceptions } from './constants';
 
 @Injectable()
 export class FilesStorageService {
@@ -23,8 +23,7 @@ export class FilesStorageService {
     const fileExtension = path.extname(file.originalname);
     const hashName = `${hash}${fileExtension}`;
 
-    const subDirectory = hash.substring(0, 2);
-    const targetDirectory = path.join(uploadDirectory, subDirectory);
+    const targetDirectory = path.join(uploadDirectory);
 
     if (!fs.existsSync(targetDirectory)) {
       fs.mkdirSync(targetDirectory, { recursive: true });
@@ -34,26 +33,29 @@ export class FilesStorageService {
 
     fs.writeFileSync(filePath, file.buffer);
 
-    const fileEntity = new FileEntity({
+    const savedFile = await this.filesStorageRepository.create({
       originalName: file.originalname,
       hashName,
-      subDirectory,
       mimetype: file.mimetype,
       path: filePath,
       size: file.size,
     });
 
-    const savedFile = await this.filesStorageRepository.create(fileEntity);
-
     return {
       id: savedFile.id,
-      url: `${serveRoot}/${subDirectory}/${hashName}`,
+      url: path,
       originalName: savedFile.originalName,
       size: savedFile.size,
     };
   }
 
   async getFile(id: string) {
-    return this.filesStorageRepository.findById(id);
+    const existingFile = await this.filesStorageRepository.findById(id);
+
+    if (!existingFile) {
+      throw new NotFoundException(FilesStorageExceptions.FILE_NOT_FOUND);
+    }
+
+    return existingFile;
   }
 }

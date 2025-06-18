@@ -9,13 +9,13 @@ export class FilesStorageRepository {
     @InjectModel(FileEntity.name) private readonly fileModel: Model<FileEntity>
   ) {}
 
-  public async create(item: FileEntity) {
-    const file = new this.fileModel(item.toObject());
+  async create(data: Partial<FileEntity>) {
+    const file = new this.fileModel(data);
 
     return file.save();
   }
 
-  public async findById(id: string) {
+  async findById(id: string) {
     return this.fileModel.findById(id).exec();
   }
 }

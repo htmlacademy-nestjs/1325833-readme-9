@@ -1,10 +1,10 @@
 import { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface File {
   id?: string;
   originalName: string;
-  subDirectory: string;
   size: number;
   mimetype: string;
   hashName: string;
@@ -16,49 +16,50 @@ export interface File {
 @Schema({
   collection: 'files',
   timestamps: true,
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
+  _id: true,
 })
 export class FileEntity extends Document implements File {
   @Prop({
+    type: String,
     required: true,
+    default: () => uuidv4(),
   })
-  public originalName: string;
+  override _id: string;
 
   @Prop({
     required: true,
   })
-  public hashName: string;
+  originalName: string;
 
   @Prop({
     required: true,
   })
-  public subDirectory: string;
+  hashName: string;
 
   @Prop({
     required: true,
   })
-  public mimetype: string;
+  mimetype: string;
 
   @Prop({
     required: true,
   })
-  public path: string;
+  path: string;
 
   @Prop({
     required: true,
   })
-  public size: number;
+  size: number;
 
-  public override id?: string;
+  override id?: string;
 
-  public createdAt: Date;
+  createdAt: Date;
 
-  public updatedAt: Date;
+  updatedAt: Date;
 }
 
 export const FileSchema = SchemaFactory.createForClass(FileEntity);
 
 FileSchema.virtual('id').get(function () {
-  return this._id?.toString();
+  return this._id.toString();
 });

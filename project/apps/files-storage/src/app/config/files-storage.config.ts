@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { plainToClass, Transform, Type } from 'class-transformer';
 
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 3002;
 const DEFAULT_MONGO_PORT = 27017;
 
 enum Environment {
@@ -49,10 +49,10 @@ export class ApplicationConfig {
   @Transform(({ value }) => value || Environment.DEVELOPMENT)
   environment: Environment;
 
-  @IsPort()
-  @Transform(({ value }) =>
-    value && !isNaN(parseInt(value)) ? parseInt(value) : DEFAULT_PORT
-  )
+  @IsInt()
+  @Min(1)
+  @Max(65535)
+  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_PORT))
   port: number;
 
   @IsString()
