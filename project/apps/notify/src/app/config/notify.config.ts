@@ -3,17 +3,13 @@ import {
   IsEnum,
   IsInt,
   IsString,
-  Min,
   Max,
-  validateOrReject,
+  Min,
   ValidateNested,
-  IsPort,
+  validateOrReject,
   ValidationError,
 } from 'class-validator';
 import { plainToClass, Transform, Type } from 'class-transformer';
-
-const DEFAULT_PORT = 3002;
-const DEFAULT_MONGO_PORT = 27017;
 
 enum Environment {
   DEVELOPMENT = 'development',
@@ -21,30 +17,33 @@ enum Environment {
   STAGE = 'stage',
 }
 
-class DbConfig {
+const DEFAULT_PORT = 3003;
+const DEFAULT_RABBIT_PORT = 5672;
+
+class RabbitConfig {
   @IsString()
   host: string;
 
   @IsInt()
   @Min(1)
   @Max(65535)
-  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_MONGO_PORT))
+  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_RABBIT_PORT))
   port: number;
-
-  @IsString()
-  name: string;
-
-  @IsString()
-  user: string;
 
   @IsString()
   password: string;
 
   @IsString()
-  authBase: string;
+  user: string;
+
+  @IsString()
+  queue: string;
+
+  @IsString()
+  exchange: string;
 }
 
-export class ApplicationConfig {
+class ApplicationConfig {
   @IsEnum(Environment)
   @Transform(({ value }) => value || Environment.DEVELOPMENT)
   environment: Environment;
@@ -55,30 +54,22 @@ export class ApplicationConfig {
   @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_PORT))
   port: number;
 
-  @IsString()
-  uploadDirectory: string;
-
-  @IsString()
-  serveRoot: string;
-
   @ValidateNested()
-  @Type(() => DbConfig)
-  db: DbConfig;
+  @Type(() => RabbitConfig)
+  rabbit: RabbitConfig;
 }
 
 const getConfig = async () => {
   const config = plainToClass(ApplicationConfig, {
     environment: process.env.NODE_ENV,
     port: process.env.PORT,
-    uploadDirectory: process.env.UPLOAD_DIRECTORY_PATH,
-    serveRoot: process.env.SERVE_ROOT,
-    db: {
-      host: process.env.MONGO_HOST,
-      port: process.env.MONGO_PORT,
-      name: process.env.MONGO_DB,
-      user: process.env.MONGO_USER,
-      password: process.env.MONGO_PASSWORD,
-      authBase: process.env.MONGO_AUTH_BASE,
+    rabbit: {
+      host: process.env.RABBIT_HOST,
+      port: process.env.RABBIT_PORT,
+      password: process.env.RABBIT_PASSWORD,
+      user: process.env.RABBIT_USER,
+      queue: process.env.RABBIT_QUEUE,
+      exchange: process.env.RABBIT_EXCHANGE,
     },
   });
 
@@ -90,11 +81,9 @@ const getConfig = async () => {
     );
 
     throw new Error(
-      `[FilesStorage Config Validation Errors]: ${errorMessages.join('; ')}`
+      `[Notify Config Validation Errors]: ${errorMessages.join('; ')}`
     );
   }
-
-  return config;
 };
 
 export default registerAs('application', getConfig);

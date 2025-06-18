@@ -15,5 +15,6 @@ coverage
 account.env
 blog.env
 files-storage.env
+notify.env
 .env
 **/uploads/*

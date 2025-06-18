@@ -4,6 +4,9 @@
   "include": [],
   "references": [
     {
+      "path": "../../libs/shared/swagger"
+    },
+    {
       "path": "./tsconfig.app.json"
     }
   ]
