@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import * as crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ConfigService } from '@nestjs/config';
@@ -19,7 +19,7 @@ export class FilesStorageService {
     ) as string;
     const serveRoot = this.configService.get<string>('application.serveRoot');
 
-    const hash = crypto.createHash('sha256').update(file.buffer).digest('hex');
+    const hash = uuidv4();
     const fileExtension = path.extname(file.originalname);
     const hashName = `${hash}${fileExtension}`;
 
@@ -37,13 +37,13 @@ export class FilesStorageService {
       originalName: file.originalname,
       hashName,
       mimetype: file.mimetype,
-      path: filePath,
+      path: `${serveRoot}/${hashName}`,
       size: file.size,
     });
 
     return {
       id: savedFile.id,
-      url: path,
+      path: savedFile.path,
       originalName: savedFile.originalName,
       size: savedFile.size,
     };
@@ -56,6 +56,11 @@ export class FilesStorageService {
       throw new NotFoundException(FilesStorageExceptions.FILE_NOT_FOUND);
     }
 
-    return existingFile;
+    return {
+      id: existingFile.id,
+      path: existingFile.path,
+      originalName: existingFile.originalName,
+      size: existingFile.size,
+    };
   }
 }
