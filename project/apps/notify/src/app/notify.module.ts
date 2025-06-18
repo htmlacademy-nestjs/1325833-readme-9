@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { NotifyController } from './notify.controller';
-import { NotifyService } from './notify.service';
+import { EmailModule } from './email/email.module';
 import { ConfigModule } from '@nestjs/config';
 import { notifyConfig } from './config';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { getRabbitMqOptions } from '@project/core';
 
 const ENV_BLOG_FILE_PATH = 'apps/notify/notify.env';
 
@@ -14,8 +15,11 @@ const ENV_BLOG_FILE_PATH = 'apps/notify/notify.env';
       load: [notifyConfig],
       envFilePath: ENV_BLOG_FILE_PATH,
     }),
+    EmailModule,
+    RabbitMQModule.forRootAsync(
+      RabbitMQModule,
+      getRabbitMqOptions('application.rabbit')
+    ),
   ],
-  controllers: [NotifyController],
-  providers: [NotifyService],
 })
 export class NotifyModule {}

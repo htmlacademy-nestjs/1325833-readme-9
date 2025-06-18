@@ -3,10 +3,10 @@ services:
   readme.notify.fakesmtp:
     image: gessnerfl/fake-smtp-server:2.2.0
     container_name: "readme.notify.fakesmtp"
-    hostname: "readme.notify.fakesmtp"
+    hostname: ${FAKESMTP_HOSTNAME}
     ports:
       - "8025:8025"
-      - "1085:8080"
+      - "1085:${FAKESMTP_PORT}"
 
   readme.notify.rabbitmq:
     image: rabbitmq:3.11-management
@@ -14,7 +14,7 @@ services:
 
     ports:
       - '1088:15672'
-      - '5672:5672'
+      - '${RABBIT_PORT}:${RABBIT_PORT}'
 
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}

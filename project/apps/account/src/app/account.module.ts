@@ -4,12 +4,13 @@ import { AccountService } from './account.service';
 import { JwtModule } from '@nestjs/jwt';
 import { UserRepository } from './user.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { getJwtConfig, jwtConfig } from '@project/core';
+import { getJwtConfig, getRabbitMqOptions, jwtConfig } from '@project/core';
 import { JwtStrategy } from './strategies';
 import { accountConfig } from './config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongoConfig, getMongooseOptions } from './mongo';
 import { UserEntity, UserSchema } from './entities';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 
 const ENV_ACCOUNT_FILE_PATH = 'apps/account/account.env';
 
@@ -28,6 +29,10 @@ const ENV_ACCOUNT_FILE_PATH = 'apps/account/account.env';
     }),
     MongooseModule.forRootAsync(getMongooseOptions()),
     MongooseModule.forFeature([{ name: UserEntity.name, schema: UserSchema }]),
+    RabbitMQModule.forRootAsync(
+      RabbitMQModule,
+      getRabbitMqOptions('application.rabbit')
+    ),
   ],
   controllers: [AccountController],
   providers: [JwtStrategy, AccountService, UserRepository],

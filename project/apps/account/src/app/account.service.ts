@@ -24,12 +24,15 @@ import {
   RegisterRdo,
 } from './rdo';
 import { v4 as uuidv4 } from 'uuid';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { RABBIT_EXCHANGE, RabbitRouting } from '@project/core';
 
 @Injectable()
 export class AccountService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly amqpConnection: AmqpConnection
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<RegisterRdo> {
@@ -53,6 +56,12 @@ export class AccountService {
       ...newUserPayload,
       passwordHash,
     });
+
+    await this.amqpConnection.publish(
+      RABBIT_EXCHANGE,
+      RabbitRouting.Register,
+      newUserPayload.email
+    );
 
     return { isSuccess: true };
   }

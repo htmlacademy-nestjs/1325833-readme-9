@@ -1,16 +1,19 @@
 import { ConfigService } from '@nestjs/config';
 import { getRabbitMQConnectionString } from '../helpers';
+import { RabbitMQConfig } from '@golevelup/nestjs-rabbitmq';
 
 export const getRabbitMqOptions = (optionSpace: string) => {
   const getOption = (option: string) => `${optionSpace}.${option}`;
 
   return {
     inject: [ConfigService],
-    useFactory: async (configService: ConfigService) => ({
+    useFactory: async (
+      configService: ConfigService
+    ): Promise<RabbitMQConfig> => ({
       exchanges: [
         {
-          name: configService.get<string>(getOption('queue')),
-          type: 'direct',
+          name: configService.get<string>(getOption('exchange')) as string,
+          type: 'topic',
         },
       ],
       uri: getRabbitMQConnectionString({

@@ -19,6 +19,7 @@ enum Environment {
 
 const DEFAULT_PORT = 3003;
 const DEFAULT_RABBIT_PORT = 5672;
+const DEFAULT_SMTP_PORT = 8080;
 
 class RabbitConfig {
   @IsString()
@@ -43,6 +44,17 @@ class RabbitConfig {
   exchange: string;
 }
 
+class SmtpConfig {
+  @IsString()
+  hostname: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(65535)
+  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_SMTP_PORT))
+  port: number;
+}
+
 class ApplicationConfig {
   @IsEnum(Environment)
   @Transform(({ value }) => value || Environment.DEVELOPMENT)
@@ -57,6 +69,10 @@ class ApplicationConfig {
   @ValidateNested()
   @Type(() => RabbitConfig)
   rabbit: RabbitConfig;
+
+  @ValidateNested()
+  @Type(() => SmtpConfig)
+  smtp: SmtpConfig;
 }
 
 const getConfig = async () => {
@@ -71,10 +87,16 @@ const getConfig = async () => {
       queue: process.env.RABBIT_QUEUE,
       exchange: process.env.RABBIT_EXCHANGE,
     },
+    smtp: {
+      hostname: process.env.FAKESMTP_HOSTNAME,
+      port: process.env.FAKESMTP_PORT,
+    },
   });
 
   try {
     await validateOrReject(config);
+
+    return config;
   } catch (errors) {
     const errorMessages = (errors as ValidationError[]).flatMap((error) =>
       Object.values(error.constraints || {})
