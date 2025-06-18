@@ -1,2 +1,2 @@
-export * from './account-exceptions.contants';
+export * from './account-exceptions.constants';
 export * from './token-expirations.constants';

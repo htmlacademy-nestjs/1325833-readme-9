@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from '@project/core';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { v4 as uuidv4 } from 'uuid';
 
 @Schema({
@@ -38,9 +38,10 @@ export class UserEntity extends Document implements Omit<User, 'id'> {
   registrationDate: Date;
 
   @Prop({
-    required: true,
+    type: Array<string>,
+    default: () => [],
   })
-  subscribersCount: number;
+  subscribers: string[];
 
   @Prop({
     required: true,

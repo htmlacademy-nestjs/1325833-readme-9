@@ -5,4 +5,5 @@ export const AccountExceptions = {
   OLD_PASSWORD_DO_NOT_MATCH: 'Old password do not match',
   INVALID_REFRESH_TOKEN: 'Invalid refresh token',
   REFRESH_TOKEN_REVOKED: 'Refresh token revoked',
+  USER_ALREADY_SUBSCRIBED: 'User already subscribed',
 };

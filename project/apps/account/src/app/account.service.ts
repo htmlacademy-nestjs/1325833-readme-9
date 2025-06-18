@@ -11,6 +11,7 @@ import {
   CreateUserDto,
   LoginUserDto,
   RefreshTokenDto,
+  SubscribeDto,
 } from './dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -43,17 +44,17 @@ export class AccountService {
     const { password, ...restDto } = dto;
     const newUserPayload = {
       ...restDto,
+      refreshTokenId: null,
       registrationDate: new Date(),
-      subscribersCount: 0,
       postsCount: 0,
     };
 
-    const newUser = await this.userRepository.create({
+    await this.userRepository.create({
       ...newUserPayload,
       passwordHash,
     });
 
-    return { jwt: this.jwtService.sign({ ...newUserPayload, id: newUser.id }) };
+    return { isSuccess: true };
   }
 
   async login(dto: LoginUserDto): Promise<LoginRdo> {
@@ -127,18 +128,13 @@ export class AccountService {
       throw new NotFoundException(AccountExceptions.USER_NOT_FOUND);
     }
 
-    const {
-      _id: userId,
-      registrationDate,
-      subscribersCount,
-      postsCount,
-    } = user;
+    const { _id: userId, registrationDate, postsCount, subscribers } = user;
 
     return {
       id: userId,
       postsCount,
       registrationDate,
-      subscribersCount,
+      subscribersCount: subscribers.length,
     };
   }
 
@@ -170,6 +166,25 @@ export class AccountService {
 
   async logout(userId: string) {
     await this.userRepository.updateRefreshTokenId(userId, null);
+  }
+
+  async subscribe({ userId }: SubscribeDto, currentUserId: string) {
+    const user = await this.userRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException(AccountExceptions.USER_NOT_FOUND);
+    }
+
+    if (user.subscribers.includes(currentUserId)) {
+      throw new NotFoundException(AccountExceptions.USER_ALREADY_SUBSCRIBED);
+    }
+
+    return this.userRepository.update(
+      {
+        subscribers: [...user.subscribers, currentUserId],
+      },
+      userId
+    );
   }
 
   private async generateTokens<T>(

@@ -17,6 +17,7 @@ import {
   CreateUserDto,
   LoginUserDto,
   RefreshTokenDto,
+  SubscribeDto,
 } from './dto';
 import { CurrentUser, JwtAuthGuard } from '@project/core';
 import {
@@ -72,5 +73,14 @@ export class AccountController {
   @UseGuards(JwtAuthGuard)
   async logout(@CurrentUser('id') id: string) {
     return this.accountService.logout(id);
+  }
+
+  @Post('subscribe')
+  @UseGuards(JwtAuthGuard)
+  async subscribe(
+    @Body() dto: SubscribeDto,
+    @CurrentUser('id') currentUserId: string
+  ) {
+    return this.accountService.subscribe(dto, currentUserId);
   }
 }
