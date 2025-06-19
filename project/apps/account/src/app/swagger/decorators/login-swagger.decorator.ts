@@ -1,6 +1,6 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { LoginUserDto } from '../../dto';
+import { LoginUserDto } from '@project/core';
 import { LoginRdo } from '../../rdo';
 
 export const LoginSwaggerDecorator = () =>

@@ -6,13 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import {
-  ChangeUserPasswordDto,
-  CreateUserDto,
-  LoginUserDto,
-  RefreshTokenDto,
-  SubscribeDto,
-} from './dto';
+import { ChangeUserPasswordDto, RefreshTokenDto, SubscribeDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { AccountExceptions, TokenExpirations } from './constants';
@@ -25,7 +19,12 @@ import {
 } from './rdo';
 import { v4 as uuidv4 } from 'uuid';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { RABBIT_EXCHANGE, RabbitRouting } from '@project/core';
+import {
+  RABBIT_EXCHANGE,
+  RabbitRouting,
+  CreateUserDto,
+  LoginUserDto,
+} from '@project/core';
 
 @Injectable()
 export class AccountService {

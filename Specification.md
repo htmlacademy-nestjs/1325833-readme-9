@@ -59,6 +59,11 @@ cd ../../../
 
 И далее запустить каждый сервис:
 
+#### Запуск сервиса api-gateway
+```bash
+nx run api-gateway:serve
+```
+
 #### Запуск сервиса account
 ```bash
 nx run account:serve
@@ -79,6 +84,6 @@ nx run blog:serve
 nx run notify:serve
 ```
 
-
+TODO: Описать создание .env файлов
 
 

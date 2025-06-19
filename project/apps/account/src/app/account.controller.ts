@@ -9,17 +9,15 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
-  Req,
 } from '@nestjs/common';
 import { AccountService } from './account.service';
+import { ChangeUserPasswordDto, RefreshTokenDto, SubscribeDto } from './dto';
 import {
-  ChangeUserPasswordDto,
+  CurrentUser,
+  JwtAuthGuard,
   CreateUserDto,
   LoginUserDto,
-  RefreshTokenDto,
-  SubscribeDto,
-} from './dto';
-import { CurrentUser, JwtAuthGuard } from '@project/core';
+} from '@project/core';
 import {
   RegisterSwaggerDecorator,
   LoginSwaggerDecorator,

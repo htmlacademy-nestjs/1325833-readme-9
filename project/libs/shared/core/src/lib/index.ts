@@ -6,3 +6,5 @@ export * from './prisma';
 export * from './constants';
 export * from './guards';
 export * from './brokers';
+export * from './http-client';
+export * from './dto';
