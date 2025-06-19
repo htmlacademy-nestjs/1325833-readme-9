@@ -15,6 +15,13 @@ bash generate-envs.sh
 
 ### 2. Создание и запуск Docker контейнеров
 
+Создать и запустить все контейнеры можно следующей командой:
+```bash
+bash start-all-dockers.sh
+```
+
+Или же можно создавать и запускать контейнеры выборочно.
+
 #### Запуск контейнера для сервиса Account
 ```bash
 docker compose --file ./apps/account/docker-compose.dev.yml --project-name "readme-account" --env-file ./apps/account/account.env up -d
@@ -37,32 +44,23 @@ docker compose --file ./apps/notify/docker-compose.dev.yml --project-name "readm
 
 ### 3. Подготовка Prisma клиента
 
-Необходимо перейти в каталог <b>libs/blog/models</b>, используя следующую команду:
+Чтобы сгенерировать Prisma, нужно выполнить следующий скрипт:
 ```bash
-cd libs/blog/models
+bash generate-prisma.sh
 ```
 
-Далее, по очереди выполнить 2 следующие команды:
+Если необходимо дропнуть базу Prisma, то нужно запустить следующий скрипт:
 ```bash
-npx prisma generate
-```
-```bash
-npx prisma migrate dev --name init
-```
-
-Если необходимо дропнуть базу Prisma, то нужно запустить следующую команду:
-```bash
-npx prisma migrate reset
+bash reset-prisma.sh
 ```
 
 ### 4. Запуск сервисов
-
-Далее, необходимо вернуться в папку project следующей командой:
+Чтобы запустить все сервисы разом, нужно выполнить команду:
 ```bash
-cd ../../../
+bash start-all-services.sh
 ```
 
-И далее запустить каждый сервис:
+Или запустить каждый сервис руками:
 
 #### Запуск сервиса api-gateway
 ```bash
