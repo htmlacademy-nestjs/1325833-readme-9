@@ -5,8 +5,8 @@ services:
     container_name: "readme.notify.fakesmtp"
     hostname: ${FAKESMTP_HOSTNAME}
     ports:
-      - "8025:8025"
-      - "1085:${FAKESMTP_PORT}"
+      - "${FAKESMTP_PORT_SERVICE}:${FAKESMTP_PORT_SERVICE}"
+      - "${FAKESMTP_PORT_OUT}:${FAKESMTP_PORT}"
 
   readme.notify.rabbitmq:
     image: rabbitmq:3.11-management

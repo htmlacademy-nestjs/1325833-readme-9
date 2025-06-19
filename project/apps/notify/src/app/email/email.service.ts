@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
-import { EmailExceptions } from './constants';
+import { emailExceptions, emailText } from './constants';
 
 @Injectable()
 export class EmailService {
@@ -24,15 +24,14 @@ export class EmailService {
     try {
       await this.transporter.sendMail({
         to,
-        from: 'noreply@example.com',
-        subject: 'Регистрация успешна!',
-        text: 'Спасибо за регистрацию!',
+        from: emailText.FROM_EMAIL,
+        subject: emailText.SUCCESS_REGISTER,
+        text: emailText.THANKS_FOR_REGISTER,
       });
 
-      this.logger.log('Успешно отправлено!');
+      this.logger.log(emailText.SUCCESS_SENDING_MAIL);
     } catch (error) {
-      console.log(321, error);
-      this.logger.error(EmailExceptions.ERROR_SENDING_MAIL);
+      this.logger.error(emailExceptions.ERROR_SENDING_MAIL, error);
     }
   }
 }

@@ -89,7 +89,7 @@ const getConfig = async () => {
     },
     smtp: {
       hostname: process.env.FAKESMTP_HOSTNAME,
-      port: process.env.FAKESMTP_PORT,
+      port: process.env.FAKESMTP_PORT_SERVICE,
     },
   });
 
