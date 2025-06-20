@@ -22,6 +22,7 @@ import {
   CreateVideoPostDto,
   GetPostsDto,
   UpdatePostDto,
+  LikePostRdo,
 } from '@project/core';
 
 @Injectable()
@@ -177,7 +178,7 @@ export class PostsService {
     return this.postsRepository.searchPosts(query);
   }
 
-  async likePost(postId: string, userId: string) {
+  async likePost(postId: string, userId: string): Promise<LikePostRdo> {
     try {
       const post = await this.postsRepository.findPostById(postId);
 

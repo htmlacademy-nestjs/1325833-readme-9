@@ -1,18 +1,18 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CommonPostRdo } from '@project/core';
+import { CommentPostRdo } from '@project/core';
 
-export const MyDraftsSwaggerDecorator = () =>
+export const GetCommentsSwaggerDecorator = () =>
   applyDecorators(
     ApiBearerAuth(),
-    ApiResponse({
-      type: Array<CommonPostRdo>,
-      status: HttpStatus.OK,
-      description: 'Posts fetch successfully',
-    }),
     ApiOperation({
-      summary: 'Get my drafts',
-      description: 'Get current user drafts',
+      summary: `Get comments`,
+      description: `Get comments for post`,
+    }),
+    ApiResponse({
+      type: Array<CommentPostRdo>,
+      status: HttpStatus.OK,
+      description: 'Comments get successfully',
     }),
     ApiResponse({
       status: HttpStatus.UNAUTHORIZED,
@@ -20,6 +20,6 @@ export const MyDraftsSwaggerDecorator = () =>
     }),
     ApiResponse({
       status: HttpStatus.NOT_FOUND,
-      description: 'User not found',
+      description: 'User or post not found',
     })
   );

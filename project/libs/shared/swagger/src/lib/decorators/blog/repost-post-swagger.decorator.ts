@@ -1,22 +1,16 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiResponse,
-} from '@nestjs/swagger';
-import { CreatePostDto, PostType } from '@project/core';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CreatePostRdo } from '@project/core';
 
-export const CreatePostSwaggerDecorator = (postType: PostType, rdo: any) =>
+export const RepostPostSwaggerDecorator = () =>
   applyDecorators(
     ApiBearerAuth(),
-    ApiBody({ type: CreatePostDto }),
     ApiOperation({
-      summary: `Create ${postType} post`,
-      description: `Create post with ${postType} type`,
+      summary: `Repost post`,
+      description: `Create a repost of a post`,
     }),
     ApiResponse({
-      type: rdo,
+      type: CreatePostRdo,
       status: HttpStatus.CREATED,
       description: 'Post created successfully',
     }),

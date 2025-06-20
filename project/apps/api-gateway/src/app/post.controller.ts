@@ -3,15 +3,20 @@ import { type Express } from 'express';
 import {
   Body,
   Controller,
+  Delete,
+  Get,
   Inject,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  CommonPostRdo,
   CreateLinkPostDto,
   CreateLinkPostRdo,
   CreatePhotoPostDto,
@@ -22,12 +27,22 @@ import {
   CreateTextPostRdo,
   CreateVideoPostDto,
   CreateVideoPostRdo,
+  GetPostsDto,
   HTTP_CLIENT,
   HttpClientImpl,
   PostType,
   UploadedFileRdo,
 } from '@project/core';
-import { CreatePostSwaggerDecorator } from '@project/swagger';
+import {
+  CreatePostSwaggerDecorator,
+  MyDraftsSwaggerDecorator,
+  PublishPostSwaggerDecorator,
+  RepostPostSwaggerDecorator,
+  DeletePostSwaggerDecorator,
+  GetPostsSwaggerDecorator,
+  SearchPostsSwaggerDecorator,
+  GetPostByIdSwaggerDecorator,
+} from '@project/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import FormData from 'form-data';
 
@@ -128,5 +143,55 @@ export class PostController {
       `${this.blogServiceUrl}/blog/${PostType.LINK}`,
       dto
     );
+  }
+
+  @Get('my-drafts')
+  @MyDraftsSwaggerDecorator()
+  async getMyDrafts(): Promise<CommonPostRdo[]> {
+    return this.httpClient.get(`${this.blogServiceUrl}/blog/my-drafts`);
+  }
+
+  @Post('publish/:id')
+  @PublishPostSwaggerDecorator()
+  async publishPost(@Param('id') id: string): Promise<CommonPostRdo> {
+    return this.httpClient.post(
+      `${this.blogServiceUrl}/blog/publish/${id}`,
+      null
+    );
+  }
+
+  @Post('repost/:id')
+  @RepostPostSwaggerDecorator()
+  async repostPost(@Param('id') id: string) {
+    return this.httpClient.post(
+      `${this.blogServiceUrl}/blog/repost-post/${id}`,
+      null
+    );
+  }
+
+  @Delete(':id')
+  @DeletePostSwaggerDecorator()
+  async deletePost(@Param('id') id: string) {
+    return this.httpClient.delete(`${this.blogServiceUrl}/blog/${id}`);
+  }
+
+  @Get()
+  @GetPostsSwaggerDecorator()
+  async getPosts(@Query() dto: GetPostsDto): Promise<CommonPostRdo[]> {
+    return this.httpClient.get(`${this.blogServiceUrl}/blog`, { params: dto });
+  }
+
+  @Get('search')
+  @SearchPostsSwaggerDecorator()
+  async searchPosts(@Query('query') query: string): Promise<CommonPostRdo[]> {
+    return this.httpClient.get(`${this.blogServiceUrl}/blog/search`, {
+      params: { query },
+    });
+  }
+
+  @Get(':id')
+  @GetPostByIdSwaggerDecorator()
+  async getPostById(@Param('id') id: string): Promise<CommonPostRdo> {
+    return this.httpClient.get(`${this.blogServiceUrl}/blog/${id}`);
   }
 }

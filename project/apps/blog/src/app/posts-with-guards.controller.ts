@@ -11,6 +11,9 @@ import {
   CreatePostSwaggerDecorator,
   MyDraftsSwaggerDecorator,
   PublishPostSwaggerDecorator,
+  RepostPostSwaggerDecorator,
+  DeletePostSwaggerDecorator,
+  LikePostSwaggerDecorator,
 } from '@project/swagger';
 import {
   CurrentUser,
@@ -28,6 +31,7 @@ import {
   CreateQuotePostDto,
   CreateTextPostDto,
   CreateVideoPostDto,
+  LikePostRdo,
 } from '@project/core';
 import { PostsService } from './posts.service';
 
@@ -104,6 +108,7 @@ export class PostsWithGuardsController {
   }
 
   @Delete(':id')
+  @DeletePostSwaggerDecorator()
   async deletePost(
     @Param('id') postId: string,
     @CurrentUser('id') userId: string
@@ -112,6 +117,7 @@ export class PostsWithGuardsController {
   }
 
   @Post('repost-post/:id')
+  @RepostPostSwaggerDecorator()
   async repostPost(
     @Param('id') postId: string,
     @CurrentUser('id') userId: string
@@ -120,10 +126,11 @@ export class PostsWithGuardsController {
   }
 
   @Post('like/:id')
+  @LikePostSwaggerDecorator()
   async likePost(
     @Param('id') postId: string,
     @CurrentUser('id') userId: string
-  ) {
+  ): Promise<LikePostRdo> {
     return this.postsService.likePost(postId, userId);
   }
 }

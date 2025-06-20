@@ -5,3 +5,6 @@ export * from './create-quote-post.rdo';
 export * from './create-photo-post.rdo';
 export * from './create-link-post.rdo';
 export * from './common-post.rdo';
+export * from './like-post.rdo';
+export * from './comment-post.rdo';
+export * from './delete-comment.rdo';

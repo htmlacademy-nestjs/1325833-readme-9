@@ -5,20 +5,20 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { CreatePostDto, PostType } from '@project/core';
+import { CommentPostRdo, CommentPostDto } from '@project/core';
 
-export const CreatePostSwaggerDecorator = (postType: PostType, rdo: any) =>
+export const CommentPostSwaggerDecorator = () =>
   applyDecorators(
     ApiBearerAuth(),
-    ApiBody({ type: CreatePostDto }),
+    ApiBody({ type: CommentPostDto }),
     ApiOperation({
-      summary: `Create ${postType} post`,
-      description: `Create post with ${postType} type`,
+      summary: `Create comment`,
+      description: `Create comment for post`,
     }),
     ApiResponse({
-      type: rdo,
+      type: CommentPostRdo,
       status: HttpStatus.CREATED,
-      description: 'Post created successfully',
+      description: 'Comment created successfully',
     }),
     ApiResponse({
       status: HttpStatus.UNAUTHORIZED,
@@ -26,6 +26,6 @@ export const CreatePostSwaggerDecorator = (postType: PostType, rdo: any) =>
     }),
     ApiResponse({
       status: HttpStatus.NOT_FOUND,
-      description: 'User not found',
+      description: 'User or post not found',
     })
   );
