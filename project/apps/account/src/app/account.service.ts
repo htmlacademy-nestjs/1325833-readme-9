@@ -11,6 +11,7 @@ import {
   CreateUserDto,
   LoginUserDto,
   RefreshTokenDto,
+  SubscribeDto,
 } from './dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -23,12 +24,15 @@ import {
   RegisterRdo,
 } from './rdo';
 import { v4 as uuidv4 } from 'uuid';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { RABBIT_EXCHANGE, RabbitRouting } from '@project/core';
 
 @Injectable()
 export class AccountService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly amqpConnection: AmqpConnection
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<RegisterRdo> {
@@ -39,22 +43,27 @@ export class AccountService {
     }
 
     const passwordHash = await this.hashPassword(dto.password);
-    const refreshTokenId = uuidv4();
 
     const { password, ...restDto } = dto;
     const newUserPayload = {
       ...restDto,
+      refreshTokenId: null,
       registrationDate: new Date(),
-      subscribersCount: 0,
       postsCount: 0,
     };
 
-    const newUser = await this.userRepository.create({
+    await this.userRepository.create({
       ...newUserPayload,
       passwordHash,
     });
 
-    return { jwt: this.jwtService.sign({ ...newUserPayload, id: newUser.id }) };
+    await this.amqpConnection.publish(
+      RABBIT_EXCHANGE,
+      RabbitRouting.Register,
+      newUserPayload.email
+    );
+
+    return { isSuccess: true };
   }
 
   async login(dto: LoginUserDto): Promise<LoginRdo> {
@@ -128,18 +137,13 @@ export class AccountService {
       throw new NotFoundException(AccountExceptions.USER_NOT_FOUND);
     }
 
-    const {
-      _id: userId,
-      registrationDate,
-      subscribersCount,
-      postsCount,
-    } = user;
+    const { _id: userId, registrationDate, postsCount, subscribers } = user;
 
     return {
       id: userId,
       postsCount,
       registrationDate,
-      subscribersCount,
+      subscribersCount: subscribers.length,
     };
   }
 
@@ -171,6 +175,25 @@ export class AccountService {
 
   async logout(userId: string) {
     await this.userRepository.updateRefreshTokenId(userId, null);
+  }
+
+  async subscribe({ userId }: SubscribeDto, currentUserId: string) {
+    const user = await this.userRepository.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException(AccountExceptions.USER_NOT_FOUND);
+    }
+
+    if (user.subscribers.includes(currentUserId)) {
+      throw new NotFoundException(AccountExceptions.USER_ALREADY_SUBSCRIBED);
+    }
+
+    return this.userRepository.update(
+      {
+        subscribers: [...user.subscribers, currentUserId],
+      },
+      userId
+    );
   }
 
   private async generateTokens<T>(

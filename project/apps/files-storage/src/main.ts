@@ -1,17 +1,30 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
+import { FilesStorageModule } from './app/files-storage.module';
+import { ConfigService } from '@nestjs/config';
+import { setupSwagger } from '@project/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(FilesStorageModule);
   const globalPrefix = 'api';
+
   app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    })
+  );
+
+  const configService = app.get(ConfigService);
+  const port = configService.get('application.port');
+
+  setupSwagger(app);
+
   await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`

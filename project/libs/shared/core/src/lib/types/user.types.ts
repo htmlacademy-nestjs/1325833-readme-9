@@ -4,14 +4,15 @@ export interface User {
   username: string;
   passwordHash: string;
   registrationDate: Date;
-  subscribersCount: number;
+  subscribers: string[];
   postsCount: number;
+  refreshTokenId: string | null;
   avatar?: string;
 }
 
 export interface PublicUser {
   id: User['id'];
-  subscribersCount: User['subscribersCount'];
+  subscribersCount: number;
   postsCount: User['postsCount'];
   registrationDate: User['registrationDate'];
 }

@@ -10,7 +10,7 @@ export class UserRepository {
     @InjectModel(UserEntity.name) private readonly userModel: Model<UserEntity>
   ) {}
 
-  async create(user: Omit<User, 'id'>): Promise<UserEntity> {
+  async create(user: Omit<User, 'id' | 'subscribers'>): Promise<UserEntity> {
     const newUser = new this.userModel(user);
 
     return newUser.save();

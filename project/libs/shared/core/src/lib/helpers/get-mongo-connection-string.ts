@@ -7,6 +7,5 @@ export const getMongoConnectionString = ({
   port,
   name,
   authBase,
-}: MongoConfig): string => {
-  return `mongodb://${user}:${password}@${host}:${port}/${name}?authSource=${authBase}`;
-};
+}: MongoConfig): string =>
+  `mongodb://${user}:${password}@${host}:${port}/${name}?authSource=${authBase}`;
