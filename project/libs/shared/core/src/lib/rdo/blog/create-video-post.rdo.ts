@@ -1,5 +1,5 @@
 import { CreatePostRdo } from './create-post.rdo';
-import { PostType } from '@project/core';
+import { PostType } from '../../types';
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 

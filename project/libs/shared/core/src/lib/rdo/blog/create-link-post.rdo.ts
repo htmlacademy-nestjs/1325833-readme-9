@@ -1,7 +1,7 @@
 import { CreatePostRdo } from './create-post.rdo';
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { PostType } from '@project/core';
+import { PostType } from '../../types';
 
 export class CreateLinkPostRdo extends CreatePostRdo {
   @Expose()

@@ -1,4 +1,4 @@
-import { PostType } from '@project/core';
+import { PostType } from '../../types';
 import { CreatePostDto } from './create-post.dto';
 import { IsEnum, IsOptional, IsString, IsUrl, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';

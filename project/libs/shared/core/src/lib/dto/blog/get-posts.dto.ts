@@ -4,11 +4,9 @@ import {
   DEFAULT_POSTS_PAGE,
   MAX_POSTS_LIMIT,
   MIN_POSTS_LIMIT,
-  PostSort,
-  PostType,
-  IsTags,
-  PostStatus,
-} from '@project/core';
+} from '../../constants';
+import { PostType, PostStatus, PostSort } from '../../types';
+import { IsTags } from '../../decorators';
 import { Transform } from 'class-transformer';
 
 export class GetPostsDto {

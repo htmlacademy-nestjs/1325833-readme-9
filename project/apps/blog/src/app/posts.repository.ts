@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PostSort, PostStatus, PrismaService } from '@project/core';
 import {
+  PostSort,
+  PostStatus,
+  PrismaService,
   CreateLinkPostDto,
   CreatePhotoPostDto,
   CreateQuotePostDto,
@@ -8,7 +10,7 @@ import {
   CreateVideoPostDto,
   GetPostsDto,
   UpdatePostDto,
-} from './dto';
+} from '@project/core';
 import { Prisma } from '@prisma/client';
 import { PostMapper } from './mappers';
 

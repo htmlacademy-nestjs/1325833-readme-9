@@ -1,6 +1,6 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CommonPostRdo } from '../../rdo';
+import { CommonPostRdo } from '@project/core';
 
 export const MyDraftsSwaggerDecorator = () =>
   applyDecorators(

@@ -4,7 +4,7 @@ import {
   MIN_COMMENTS_LIMIT,
   MAX_COMMENTS_LIMIT,
   DEFAULT_COMMENTS_LIMIT,
-} from '@project/core';
+} from '../../constants';
 
 export class GetCommentsDto {
   @IsOptional()

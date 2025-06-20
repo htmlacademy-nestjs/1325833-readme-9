@@ -5,6 +5,7 @@ import { apiGatewayConfig } from './config';
 import { HttpClientProvider, HttpClientInterceptor } from '@project/core';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { UserController } from './user.controller';
+import { PostController } from './post.controller';
 
 const ENV_API_GATEWAY_PATH = 'apps/api-gateway/api-gateway.env';
 
@@ -17,7 +18,7 @@ const ENV_API_GATEWAY_PATH = 'apps/api-gateway/api-gateway.env';
       envFilePath: ENV_API_GATEWAY_PATH,
     }),
   ],
-  controllers: [AuthController, UserController],
+  controllers: [AuthController, UserController, PostController],
   providers: [
     HttpClientProvider,
     { provide: APP_INTERCEPTOR, useClass: HttpClientInterceptor },

@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
 import { ConfigService } from '@nestjs/config';
 import { FilesStorageRepository } from './files-storage.repository';
-import { FilesStorageExceptions } from './constants';
+import { UploadedFileRdo } from '@project/core';
 
 @Injectable()
 export class FilesStorageService {
@@ -13,7 +13,7 @@ export class FilesStorageService {
     private readonly configService: ConfigService
   ) {}
 
-  async saveFile(file: Express.Multer.File) {
+  async saveFile(file: Express.Multer.File): Promise<UploadedFileRdo> {
     const uploadDirectory = this.configService.get<string>(
       'application.uploadDirectory'
     ) as string;
@@ -46,21 +46,6 @@ export class FilesStorageService {
       path: savedFile.path,
       originalName: savedFile.originalName,
       size: savedFile.size,
-    };
-  }
-
-  async getFile(id: string) {
-    const existingFile = await this.filesStorageRepository.findById(id);
-
-    if (!existingFile) {
-      throw new NotFoundException(FilesStorageExceptions.FILE_NOT_FOUND);
-    }
-
-    return {
-      id: existingFile.id,
-      path: existingFile.path,
-      originalName: existingFile.originalName,
-      size: existingFile.size,
     };
   }
 }

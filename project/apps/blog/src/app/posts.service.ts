@@ -5,7 +5,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
+import { BlogExceptions } from './constants';
 import {
+  PostStatus,
+  PostType,
+  CommonPostRdo,
+  CreateLinkPostRdo,
+  CreatePhotoPostRdo,
+  CreateQuotePostRdo,
+  CreateTextPostRdo,
+  CreateVideoPostRdo,
   CreateLinkPostDto,
   CreatePhotoPostDto,
   CreateQuotePostDto,
@@ -13,17 +22,7 @@ import {
   CreateVideoPostDto,
   GetPostsDto,
   UpdatePostDto,
-} from './dto';
-import { BlogExceptions } from './constants';
-import {
-  CommonPostRdo,
-  CreateLinkPostRdo,
-  CreatePhotoPostRdo,
-  CreateQuotePostRdo,
-  CreateTextPostRdo,
-  CreateVideoPostRdo,
-} from './rdo';
-import { PostStatus, PostType } from '@project/core';
+} from '@project/core';
 
 @Injectable()
 export class PostsService {

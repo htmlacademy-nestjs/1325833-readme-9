@@ -1,6 +1,6 @@
-import { PostType } from '@project/core';
+import { PostType } from '../../types';
 import { CreatePostDto } from './create-post.dto';
-import { IsEnum, IsOptional, IsUrl } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePhotoPostDto extends CreatePostDto {
@@ -8,7 +8,7 @@ export class CreatePhotoPostDto extends CreatePostDto {
   @IsEnum(PostType)
   override type: PostType.PHOTO = PostType.PHOTO;
 
-  @IsUrl()
+  @IsString()
   @ApiProperty({
     example: 'https://example.com/photo',
     description: 'Photo url',

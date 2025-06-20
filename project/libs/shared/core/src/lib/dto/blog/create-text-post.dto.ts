@@ -1,18 +1,15 @@
-import { CreatePostRdo } from './create-post.rdo';
-import { Expose } from 'class-transformer';
+import { CreatePostDto } from './create-post.dto';
+import { PostType } from '../../types';
+import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PostType } from '@project/core';
 
-export class CreateTextPostRdo extends CreatePostRdo {
-  @Expose()
-  @ApiProperty({
-    example: PostType.TEXT,
-    description: 'Post type',
-    default: PostType.TEXT,
-  })
-  type: PostType.TEXT;
+export class CreateTextPostDto extends CreatePostDto {
+  @IsOptional()
+  @IsEnum(PostType)
+  override type: PostType.TEXT = PostType.TEXT;
 
-  @Expose()
+  @IsString()
+  @Length(20, 50)
   @ApiProperty({
     example: 'Big post',
     description: 'Post title',
@@ -21,7 +18,8 @@ export class CreateTextPostRdo extends CreatePostRdo {
   })
   title: string;
 
-  @Expose()
+  @IsString()
+  @Length(50, 255)
   @ApiProperty({
     example: 'Post',
     description: 'Post preview',
@@ -30,7 +28,8 @@ export class CreateTextPostRdo extends CreatePostRdo {
   })
   preview: string;
 
-  @Expose()
+  @IsString()
+  @Length(100, 1024)
   @ApiProperty({
     example:
       'This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post This is a big post',

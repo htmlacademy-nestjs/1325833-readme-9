@@ -1,5 +1,5 @@
 import { CreatePostDto } from './create-post.dto';
-import { PostType } from '@project/core';
+import { PostType } from '../../types';
 import {
   IsEnum,
   IsOptional,

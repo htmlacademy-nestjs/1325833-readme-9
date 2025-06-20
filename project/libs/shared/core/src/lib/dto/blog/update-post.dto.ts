@@ -1,5 +1,5 @@
 import { IsDate, IsEnum, IsNumber, IsOptional } from 'class-validator';
-import { PostStatus } from '@project/core';
+import { PostStatus } from '../../types';
 
 export class UpdatePostDto {
   @IsOptional()

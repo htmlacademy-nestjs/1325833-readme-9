@@ -1,18 +1,15 @@
-import { CreatePostRdo } from './create-post.rdo';
-import { Expose } from 'class-transformer';
+import { CreatePostDto } from './create-post.dto';
+import { PostType } from '../../types';
+import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PostType } from '@project/core';
 
-export class CreateQuotePostRdo extends CreatePostRdo {
-  @Expose()
-  @ApiProperty({
-    example: PostType.QUOTE,
-    description: 'Post type',
-    default: PostType.QUOTE,
-  })
-  type: PostType.QUOTE;
+export class CreateQuotePostDto extends CreatePostDto {
+  @IsOptional()
+  @IsEnum(PostType)
+  override type: PostType.QUOTE = PostType.QUOTE;
 
-  @Expose()
+  @IsString()
+  @Length(20, 300)
   @ApiProperty({
     example: 'Reason is powerless before the cry of the heart',
     description: 'Quote text',
@@ -21,7 +18,8 @@ export class CreateQuotePostRdo extends CreatePostRdo {
   })
   quoteText: string;
 
-  @Expose()
+  @IsString()
+  @Length(3, 50)
   @ApiProperty({
     example: 'Kendrick Lamar',
     description: 'Author of quote',

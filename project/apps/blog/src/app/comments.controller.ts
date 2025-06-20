@@ -9,8 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
-import { CommentPostDto, GetCommentsDto } from './dto';
-import { CurrentUser, JwtAuthGuard } from '@project/core';
+import {
+  CurrentUser,
+  JwtAuthGuard,
+  CommentPostDto,
+  GetCommentsDto,
+} from '@project/core';
 
 @Controller('blog')
 export class CommentsController {

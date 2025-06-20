@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { GetPostsDto } from './dto';
+import { GetPostsDto } from '@project/core';
 import { PostsService } from './posts.service';
 
 @Controller('blog')

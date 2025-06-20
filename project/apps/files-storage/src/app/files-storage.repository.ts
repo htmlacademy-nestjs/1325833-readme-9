@@ -14,8 +14,4 @@ export class FilesStorageRepository {
 
     return file.save();
   }
-
-  async findById(id: string) {
-    return this.fileModel.findById(id).exec();
-  }
 }

@@ -1,7 +1,8 @@
-import { IsTags, PostStatus, PostType } from '@project/core';
+import { PostStatus, PostType } from '../../types';
 import { Transform } from 'class-transformer';
 import { IsEnum, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsTags } from '../../decorators';
 
 export class CreatePostDto {
   @IsOptional()

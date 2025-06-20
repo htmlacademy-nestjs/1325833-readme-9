@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { PostType, PostStatus } from '@project/core';
+import { PostType, PostStatus } from '../../types';
 
 export abstract class CreatePostRdo {
   @Expose()
