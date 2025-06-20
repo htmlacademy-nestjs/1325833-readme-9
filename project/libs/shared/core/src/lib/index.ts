@@ -8,3 +8,4 @@ export * from './guards';
 export * from './brokers';
 export * from './http-client';
 export * from './dto';
+export * from './rdo';

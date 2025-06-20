@@ -5,8 +5,7 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { ChangeUserPasswordDto } from '../../dto';
-import { ChangePasswordRdo } from '../../rdo';
+import { ChangeUserPasswordDto, ChangePasswordRdo } from '@project/core';
 
 export const ChangePasswordSwaggerDecorator = () =>
   applyDecorators(

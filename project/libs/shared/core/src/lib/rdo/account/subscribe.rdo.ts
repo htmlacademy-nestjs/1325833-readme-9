@@ -1,12 +1,12 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseResponse } from '@project/core';
+import { BaseResponse } from '../../types';
 
-export class ChangePasswordRdo implements BaseResponse {
+export class SubscribeRdo implements BaseResponse {
   @Expose()
   @ApiProperty({
     example: false,
-    description: 'Is change password successfully',
+    description: 'Is subscribe successfully',
   })
   isSuccess: boolean;
 }

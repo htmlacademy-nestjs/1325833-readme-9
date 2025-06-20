@@ -4,12 +4,13 @@ import {
   Inject,
   Injectable,
   NestInterceptor,
+  Scope,
 } from '@nestjs/common';
 import { HTTP_CLIENT } from './http-client.constants';
 import { HttpClientImpl } from './http-client';
 import { Observable } from 'rxjs';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class HttpClientInterceptor implements NestInterceptor {
   constructor(
     @Inject(HTTP_CLIENT) private readonly httpClient: HttpClientImpl

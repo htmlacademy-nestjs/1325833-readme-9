@@ -11,6 +11,7 @@ import type {
   HttpClientOptions,
   HttpClientPayload,
 } from './http-client.types';
+import { HttpException } from '@nestjs/common';
 
 const DEFAULT_TIMEOUT_MS = 10000; // 10 seconds
 
@@ -102,9 +103,10 @@ export class HttpClientImpl implements HttpClient {
     return data;
   }
 
-  private handleError = (
-    error: AxiosError
-  ): Promise<AxiosError['response']> => {
-    return Promise.reject(error.response);
+  private handleError = (error: AxiosError): never => {
+    const status = error.response?.status || 500;
+    const message = error.response?.data || error.message;
+
+    throw new HttpException(message, status);
   };
 }

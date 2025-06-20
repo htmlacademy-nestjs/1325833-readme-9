@@ -5,7 +5,7 @@ import {
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
-import { GetUserRdo } from '../../rdo';
+import { GetUserRdo } from '@project/core';
 
 export const GetUserSwaggerDecorator = () =>
   applyDecorators(
