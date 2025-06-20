@@ -1,4 +1,4 @@
-import { PublicUser } from '@project/core';
+import { PublicUser } from '../../types';
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
