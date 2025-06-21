@@ -6,4 +6,5 @@ export const AccountExceptions = {
   INVALID_REFRESH_TOKEN: 'Invalid refresh token',
   REFRESH_TOKEN_REVOKED: 'Refresh token revoked',
   USER_ALREADY_SUBSCRIBED: 'User already subscribed',
+  USER_CANT_SUBSCRIBE_FOR_YOURSELF: `User can't subscribe for yourself`,
 };

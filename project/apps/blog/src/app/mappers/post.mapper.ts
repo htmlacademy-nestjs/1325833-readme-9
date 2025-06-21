@@ -1,13 +1,12 @@
 import { Prisma, PostType as PrismaPostType, PostStatus } from '@prisma/client';
-
 import {
+  PostType,
   CreateLinkPostDto,
   CreatePhotoPostDto,
   CreateQuotePostDto,
   CreateTextPostDto,
   CreateVideoPostDto,
-} from '../dto';
-import { PostType } from '@project/core';
+} from '@project/core';
 
 type CreatePostDto =
   | CreateLinkPostDto

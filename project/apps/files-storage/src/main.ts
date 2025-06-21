@@ -3,9 +3,14 @@ import { NestFactory } from '@nestjs/core';
 import { FilesStorageModule } from './app/files-storage.module';
 import { ConfigService } from '@nestjs/config';
 import { setupSwagger } from '@project/swagger';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(FilesStorageModule);
+
+  app.use(bodyParser.json({ limit: '20mb' }));
+  app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
+
   const globalPrefix = 'api';
 
   app.setGlobalPrefix(globalPrefix);

@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CommentPostDto, GetCommentsDto } from './dto';
+import { CommentPostDto, GetCommentsDto } from '@project/core';
 import { CommentsRepository } from './comments.repository';
 import { PostsRepository } from './posts.repository';
 import { PostsService } from './posts.service';

@@ -5,7 +5,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
+import { BlogExceptions } from './constants';
 import {
+  PostStatus,
+  PostType,
+  CommonPostRdo,
+  CreateLinkPostRdo,
+  CreatePhotoPostRdo,
+  CreateQuotePostRdo,
+  CreateTextPostRdo,
+  CreateVideoPostRdo,
   CreateLinkPostDto,
   CreatePhotoPostDto,
   CreateQuotePostDto,
@@ -13,17 +22,8 @@ import {
   CreateVideoPostDto,
   GetPostsDto,
   UpdatePostDto,
-} from './dto';
-import { BlogExceptions } from './constants';
-import {
-  CommonPostRdo,
-  CreateLinkPostRdo,
-  CreatePhotoPostRdo,
-  CreateQuotePostRdo,
-  CreateTextPostRdo,
-  CreateVideoPostRdo,
-} from './rdo';
-import { PostStatus, PostType } from '@project/core';
+  LikePostRdo,
+} from '@project/core';
 
 @Injectable()
 export class PostsService {
@@ -178,7 +178,7 @@ export class PostsService {
     return this.postsRepository.searchPosts(query);
   }
 
-  async likePost(postId: string, userId: string) {
+  async likePost(postId: string, userId: string): Promise<LikePostRdo> {
     try {
       const post = await this.postsRepository.findPostById(postId);
 

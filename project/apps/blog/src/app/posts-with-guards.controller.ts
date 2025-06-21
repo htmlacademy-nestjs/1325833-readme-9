@@ -7,27 +7,32 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser, JwtAuthGuard, PostStatus, PostType } from '@project/core';
 import {
   CreatePostSwaggerDecorator,
   MyDraftsSwaggerDecorator,
   PublishPostSwaggerDecorator,
-} from './swagger';
+  RepostPostSwaggerDecorator,
+  DeletePostSwaggerDecorator,
+  LikePostSwaggerDecorator,
+} from '@project/swagger';
 import {
+  CurrentUser,
+  JwtAuthGuard,
+  PostStatus,
+  PostType,
   CommonPostRdo,
   CreateLinkPostRdo,
   CreatePhotoPostRdo,
   CreateQuotePostRdo,
   CreateTextPostRdo,
   CreateVideoPostRdo,
-} from './rdo';
-import {
   CreateLinkPostDto,
   CreatePhotoPostDto,
   CreateQuotePostDto,
   CreateTextPostDto,
   CreateVideoPostDto,
-} from './dto';
+  LikePostRdo,
+} from '@project/core';
 import { PostsService } from './posts.service';
 
 @Controller('blog')
@@ -35,7 +40,7 @@ import { PostsService } from './posts.service';
 export class PostsWithGuardsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @Post('video')
+  @Post(PostType.VIDEO)
   @CreatePostSwaggerDecorator(PostType.VIDEO, CreateVideoPostRdo)
   async createVideoPost(
     @Body() dto: CreateVideoPostDto,
@@ -44,7 +49,7 @@ export class PostsWithGuardsController {
     return this.postsService.createVideoPost(dto, id);
   }
 
-  @Post('text')
+  @Post(PostType.TEXT)
   @CreatePostSwaggerDecorator(PostType.TEXT, CreateTextPostRdo)
   async createTextPost(
     @Body() dto: CreateTextPostDto,
@@ -53,7 +58,7 @@ export class PostsWithGuardsController {
     return this.postsService.createTextPost(dto, id);
   }
 
-  @Post('quote')
+  @Post(PostType.QUOTE)
   @CreatePostSwaggerDecorator(PostType.QUOTE, CreateQuotePostRdo)
   async createQuotePost(
     @Body() dto: CreateQuotePostDto,
@@ -62,7 +67,7 @@ export class PostsWithGuardsController {
     return this.postsService.createQuotePost(dto, id);
   }
 
-  @Post('photo')
+  @Post(PostType.PHOTO)
   @CreatePostSwaggerDecorator(PostType.PHOTO, CreatePhotoPostRdo)
   async createPhotoPost(
     @Body() dto: CreatePhotoPostDto,
@@ -71,7 +76,7 @@ export class PostsWithGuardsController {
     return this.postsService.createPhotoPost(dto, id);
   }
 
-  @Post('link')
+  @Post(PostType.LINK)
   @CreatePostSwaggerDecorator(PostType.LINK, CreateLinkPostRdo)
   async createLinkPost(
     @Body() dto: CreateLinkPostDto,
@@ -103,6 +108,7 @@ export class PostsWithGuardsController {
   }
 
   @Delete(':id')
+  @DeletePostSwaggerDecorator()
   async deletePost(
     @Param('id') postId: string,
     @CurrentUser('id') userId: string
@@ -111,6 +117,7 @@ export class PostsWithGuardsController {
   }
 
   @Post('repost-post/:id')
+  @RepostPostSwaggerDecorator()
   async repostPost(
     @Param('id') postId: string,
     @CurrentUser('id') userId: string
@@ -119,10 +126,11 @@ export class PostsWithGuardsController {
   }
 
   @Post('like/:id')
+  @LikePostSwaggerDecorator()
   async likePost(
     @Param('id') postId: string,
     @CurrentUser('id') userId: string
-  ) {
+  ): Promise<LikePostRdo> {
     return this.postsService.likePost(postId, userId);
   }
 }

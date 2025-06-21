@@ -10,6 +10,12 @@ export interface User {
   avatar?: string;
 }
 
+export interface AuthUser {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: string;
+}
+
 export interface PublicUser {
   id: User['id'];
   subscribersCount: number;

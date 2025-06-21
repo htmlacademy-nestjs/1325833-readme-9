@@ -9,24 +9,32 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
-  Req,
 } from '@nestjs/common';
 import { AccountService } from './account.service';
 import {
-  ChangeUserPasswordDto,
+  CurrentUser,
+  JwtAuthGuard,
   CreateUserDto,
   LoginUserDto,
+  ChangeUserPasswordDto,
   RefreshTokenDto,
   SubscribeDto,
-} from './dto';
-import { CurrentUser, JwtAuthGuard } from '@project/core';
+  ChangePasswordRdo,
+  GetUserRdo,
+  LoginRdo,
+  RegisterRdo,
+  RefreshRdo,
+  SubscribeRdo,
+} from '@project/core';
 import {
   RegisterSwaggerDecorator,
   LoginSwaggerDecorator,
   GetUserSwaggerDecorator,
   ChangePasswordSwaggerDecorator,
-} from './swagger';
-import { ChangePasswordRdo, GetUserRdo, LoginRdo, RegisterRdo } from './rdo';
+  RefreshSwaggerDecorator,
+  LogoutSwaggerDecorator,
+  SubscribeSwaggerDecorator,
+} from '@project/swagger';
 
 @ApiTags('Account')
 @Controller('account')
@@ -65,22 +73,25 @@ export class AccountController {
 
   @Post('refresh')
   @UseGuards(JwtAuthGuard)
-  async refreshTokens(@Body() dto: RefreshTokenDto) {
+  @RefreshSwaggerDecorator()
+  async refreshTokens(@Body() dto: RefreshTokenDto): Promise<RefreshRdo> {
     return this.accountService.refreshTokens(dto);
   }
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  async logout(@CurrentUser('id') id: string) {
+  @LogoutSwaggerDecorator()
+  async logout(@CurrentUser('id') id: string): Promise<void> {
     return this.accountService.logout(id);
   }
 
   @Post('subscribe')
   @UseGuards(JwtAuthGuard)
+  @SubscribeSwaggerDecorator()
   async subscribe(
     @Body() dto: SubscribeDto,
     @CurrentUser('id') currentUserId: string
-  ) {
+  ): Promise<SubscribeRdo> {
     return this.accountService.subscribe(dto, currentUserId);
   }
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -6,26 +7,26 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import {
-  ChangeUserPasswordDto,
-  CreateUserDto,
-  LoginUserDto,
-  RefreshTokenDto,
-  SubscribeDto,
-} from './dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { AccountExceptions, TokenExpirations } from './constants';
+import { v4 as uuidv4 } from 'uuid';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import {
+  RABBIT_EXCHANGE,
+  RabbitRouting,
+  CreateUserDto,
+  LoginUserDto,
+  ChangeUserPasswordDto,
+  RefreshTokenDto,
+  SubscribeDto,
   ChangePasswordRdo,
   GetUserRdo,
   LoginRdo,
   RefreshRdo,
   RegisterRdo,
-} from './rdo';
-import { v4 as uuidv4 } from 'uuid';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { RABBIT_EXCHANGE, RabbitRouting } from '@project/core';
+  SubscribeRdo,
+} from '@project/core';
 
 @Injectable()
 export class AccountService {
@@ -177,7 +178,16 @@ export class AccountService {
     await this.userRepository.updateRefreshTokenId(userId, null);
   }
 
-  async subscribe({ userId }: SubscribeDto, currentUserId: string) {
+  async subscribe(
+    { userId }: SubscribeDto,
+    currentUserId: string
+  ): Promise<SubscribeRdo> {
+    if (userId === currentUserId) {
+      throw new BadRequestException(
+        AccountExceptions.USER_CANT_SUBSCRIBE_FOR_YOURSELF
+      );
+    }
+
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
