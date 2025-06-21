@@ -117,7 +117,6 @@ export class PostController {
     });
 
     const headers = form.getHeaders();
-
     const uploadFileResponse: UploadedFileRdo = await this.httpClient.post(
       `${this.filesStorageServiceUrl}/api/files/upload`,
       form,
