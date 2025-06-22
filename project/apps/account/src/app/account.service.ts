@@ -163,12 +163,13 @@ export class AccountService {
       throw new NotFoundException(AccountExceptions.USER_NOT_FOUND);
     }
 
-    const { _id: userId, username, email } = user;
+    const { _id: userId, username, email, subscribers } = user;
 
     return {
       id: userId,
       username,
       email,
+      subscribers,
     };
   }
 

@@ -13,6 +13,7 @@ import {
   Post,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -28,12 +29,17 @@ import {
   CreateTextPostRdo,
   CreateVideoPostDto,
   CreateVideoPostRdo,
+  CurrentUser,
   EnrichedPostRdo,
   GetPostsDto,
   GetUserFullInfoRdo,
   HTTP_CLIENT,
   HttpClientImpl,
+  JwtAuthGuard,
   PostType,
+  RABBIT_EXCHANGE,
+  RabbitRouting,
+  SendSubscriptionEmailDto,
   UploadedFileRdo,
   UserPostsCountUpdateType,
 } from '@project/core';
@@ -49,6 +55,7 @@ import {
 } from '@project/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import FormData from 'form-data';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 
 @Controller('post')
 export class PostController {
@@ -58,6 +65,7 @@ export class PostController {
 
   constructor(
     private readonly configService: ConfigService,
+    private readonly amqpConnection: AmqpConnection,
     @Inject(HTTP_CLIENT) private readonly httpClient: HttpClientImpl
   ) {
     this.blogServiceUrl = this.configService.get<string>(
@@ -72,9 +80,11 @@ export class PostController {
   }
 
   @Post(PostType.VIDEO)
+  @UseGuards(JwtAuthGuard)
   @CreatePostSwaggerDecorator(PostType.VIDEO, CreateVideoPostRdo)
   async createVideoPost(
-    @Body() dto: CreateVideoPostDto
+    @Body() dto: CreateVideoPostDto,
+    @CurrentUser('id') userId: string
   ): Promise<CreateVideoPostRdo> {
     const post = await this.httpClient.post<CreateVideoPostRdo>(
       `${this.blogServiceUrl}/blog/${PostType.VIDEO}`,
@@ -85,6 +95,8 @@ export class PostController {
       `${this.accountServiceUrl}/account/update-posts-count`,
       { operation: UserPostsCountUpdateType.INCREMENT }
     );
+
+    this.sendSubscriptionEmail(userId, post.id);
 
     return post;
   }
@@ -237,11 +249,12 @@ export class PostController {
 
     const enrichedPosts: EnrichedPostRdo[] = await Promise.all(
       posts.map(async (post) => {
-        const user: GetUserFullInfoRdo = await this.httpClient.get(
-          `${this.accountServiceUrl}/account/full-info/${post.authorId}`
-        );
+        const { username, id, email }: GetUserFullInfoRdo =
+          await this.httpClient.get(
+            `${this.accountServiceUrl}/account/full-info/${post.authorId}`
+          );
 
-        return { ...post, author: user };
+        return { ...post, author: { username, id, email } };
       })
     );
 
@@ -260,5 +273,31 @@ export class PostController {
   @GetPostByIdSwaggerDecorator()
   async getPostById(@Param('id') id: string): Promise<CommonPostRdo> {
     return this.httpClient.get(`${this.blogServiceUrl}/blog/${id}`);
+  }
+
+  private async sendSubscriptionEmail(receiverId: string, postId: string) {
+    const sender: GetUserFullInfoRdo = await this.httpClient.get(
+      `${this.accountServiceUrl}/account/full-info/${receiverId}`
+    );
+
+    await Promise.all(
+      sender.subscribers.map(async (subscriberId) => {
+        const subscriber: GetUserFullInfoRdo = await this.httpClient.get(
+          `${this.accountServiceUrl}/account/full-info/${subscriberId}`
+        );
+
+        const dto: SendSubscriptionEmailDto = {
+          postId,
+          receiverEmail: subscriber.email,
+          senderUsername: sender.username,
+        };
+
+        await this.amqpConnection.publish(
+          RABBIT_EXCHANGE,
+          RabbitRouting.PublishNewPost,
+          dto
+        );
+      })
+    );
   }
 }

@@ -4,5 +4,5 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class EnrichedPostRdo extends CommonPostRdo {
   @ApiProperty({ type: GetUserFullInfoRdo, description: 'Post author' })
-  author: GetUserFullInfoRdo;
+  author: Omit<GetUserFullInfoRdo, 'subscribers'>;
 }

@@ -22,4 +22,12 @@ export class GetUserFullInfoRdo {
     description: 'User Email',
   })
   email: string;
+
+  @Expose()
+  @ApiProperty({
+    example: ['fwqfwqfqw-f21421-fwqfwqfwq'],
+    isArray: true,
+    description: 'User subscribers',
+  })
+  subscribers: string[];
 }
