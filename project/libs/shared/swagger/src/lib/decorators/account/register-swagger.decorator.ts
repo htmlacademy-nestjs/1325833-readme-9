@@ -1,6 +1,6 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateUserDto, LoginRdo } from '@project/core';
+import { CreateUserDto, RegisterRdo } from '@project/core';
 
 export const RegisterSwaggerDecorator = () =>
   applyDecorators(
@@ -10,7 +10,7 @@ export const RegisterSwaggerDecorator = () =>
       description: 'Create a new user account with email and password',
     }),
     ApiResponse({
-      type: LoginRdo,
+      type: RegisterRdo,
       status: HttpStatus.CREATED,
       description: 'User registered successfully',
     }),

@@ -28,3 +28,8 @@ export interface CurrentUserInterface {
   email: string;
   username: string;
 }
+
+export enum UserPostsCountUpdateType {
+  INCREMENT = 'increment',
+  DECREMENT = 'decrement',
+}

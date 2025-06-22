@@ -6,6 +6,11 @@ import {
   HttpCode,
   HttpStatus,
   Patch,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  UseInterceptors,
+  FileTypeValidator,
 } from '@nestjs/common';
 import {
   HTTP_CLIENT,
@@ -18,6 +23,7 @@ import {
   ChangePasswordRdo,
   RefreshTokenDto,
   RefreshRdo,
+  UploadedFileRdo,
 } from '@project/core';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -27,10 +33,13 @@ import {
   RegisterSwaggerDecorator,
   LogoutSwaggerDecorator,
 } from '@project/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import FormData from 'form-data';
 
 @Controller('auth')
 export class AuthController {
   accountServiceUrl?: string;
+  filesStorageServiceUrl?: string;
 
   constructor(
     private readonly configService: ConfigService,
@@ -39,16 +48,52 @@ export class AuthController {
     this.accountServiceUrl = this.configService.get<string>(
       'application.accountServiceUrl'
     );
+    this.filesStorageServiceUrl = this.configService.get<string>(
+      'application.filesStorageServiceUrl'
+    );
   }
 
   @Post('/register')
+  @UseInterceptors(FileInterceptor('avatar'))
   @HttpCode(HttpStatus.CREATED)
   @RegisterSwaggerDecorator()
-  async register(@Body() dto: CreateUserDto): Promise<RegisterRdo> {
-    return this.httpClient.post(
-      `${this.accountServiceUrl}/account/register`,
-      dto
-    );
+  async register(
+    @UploadedFile(
+      new ParseFilePipe({
+        fileIsRequired: false,
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 500 * 1024 }), // 500kb
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png)$/ }),
+        ],
+      })
+    )
+    avatar: Express.Multer.File | undefined,
+    @Body() dto: Omit<CreateUserDto, 'avatar'>
+  ): Promise<RegisterRdo> {
+    let avatarUrl = undefined;
+
+    if (avatar) {
+      const form = new FormData();
+
+      form.append('file', avatar.buffer, {
+        filename: avatar.originalname,
+        contentType: avatar.mimetype,
+      });
+
+      const headers = form.getHeaders();
+      const uploadFileResponse: UploadedFileRdo = await this.httpClient.post(
+        `${this.filesStorageServiceUrl}/api/files/upload`,
+        form,
+        { headers }
+      );
+
+      avatarUrl = `${this.filesStorageServiceUrl}${uploadFileResponse.path}`;
+    }
+
+    return this.httpClient.post(`${this.accountServiceUrl}/account/register`, {
+      ...dto,
+      avatar: avatarUrl,
+    });
   }
 
   @Post('/login')

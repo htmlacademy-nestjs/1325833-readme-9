@@ -5,3 +5,4 @@ export * from './change-password-swagger.decorator';
 export * from './refresh-swagger.decorator';
 export * from './logout-swagger.decorator';
 export * from './subscribe-swagger.decorator';
+export * from './get-user-full-info-swagger.decorator';

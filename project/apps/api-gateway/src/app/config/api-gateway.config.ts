@@ -5,10 +5,11 @@ import {
   IsString,
   Max,
   Min,
+  ValidateNested,
   validateOrReject,
   ValidationError,
 } from 'class-validator';
-import { plainToClass, Transform } from 'class-transformer';
+import { plainToClass, Transform, Type } from 'class-transformer';
 
 enum Environment {
   DEVELOPMENT = 'development',
@@ -17,6 +18,30 @@ enum Environment {
 }
 
 const DEFAULT_PORT = 3004;
+const DEFAULT_RABBIT_PORT = 5672;
+
+class RabbitConfig {
+  @IsString()
+  host: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(65535)
+  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_RABBIT_PORT))
+  port: number;
+
+  @IsString()
+  password: string;
+
+  @IsString()
+  user: string;
+
+  @IsString()
+  queue: string;
+
+  @IsString()
+  exchange: string;
+}
 
 class ApplicationConfig {
   @IsEnum(Environment)
@@ -37,6 +62,10 @@ class ApplicationConfig {
 
   @IsString()
   filesStorageServiceUrl: string;
+
+  @ValidateNested()
+  @Type(() => RabbitConfig)
+  rabbit: RabbitConfig;
 }
 
 const getConfig = async () => {
@@ -46,6 +75,14 @@ const getConfig = async () => {
     accountServiceUrl: process.env.ACCOUNT_SERVICE_URL,
     blogServiceUrl: process.env.BLOG_SERVICE_URL,
     filesStorageServiceUrl: process.env.FILES_STORAGE_SERVICE_URL,
+    rabbit: {
+      host: process.env.RABBIT_HOST,
+      port: process.env.RABBIT_PORT,
+      password: process.env.RABBIT_PASSWORD,
+      user: process.env.RABBIT_USER,
+      queue: process.env.RABBIT_QUEUE,
+      exchange: process.env.RABBIT_EXCHANGE,
+    },
   });
 
   try {

@@ -5,7 +5,8 @@ import { CommonPostRdo } from '@project/core';
 export const SearchPostsSwaggerDecorator = () =>
   applyDecorators(
     ApiResponse({
-      type: Array<CommonPostRdo>,
+      type: CommonPostRdo,
+      isArray: true,
       status: HttpStatus.OK,
       description: 'Posts search successfully',
     }),

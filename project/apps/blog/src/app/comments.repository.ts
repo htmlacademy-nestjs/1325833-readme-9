@@ -31,4 +31,12 @@ export class CommentsRepository {
       take: limit,
     });
   }
+
+  async getCommentById(id: string) {
+    return this.prismaService.comment.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
 }

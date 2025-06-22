@@ -8,3 +8,4 @@ export * from './common-post.rdo';
 export * from './like-post.rdo';
 export * from './comment-post.rdo';
 export * from './delete-comment.rdo';
+export * from './enriched-post.rdo';

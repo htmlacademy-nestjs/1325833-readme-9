@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CommentPostDto, GetCommentsDto } from '@project/core';
+import { CommentPostDto, GetCommentsDto, PostStatus } from '@project/core';
 import { CommentsRepository } from './comments.repository';
 import { PostsRepository } from './posts.repository';
 import { PostsService } from './posts.service';
@@ -23,6 +23,10 @@ export class CommentsService {
 
       if (!post) {
         throw new NotFoundException(BlogExceptions.POST_NOT_FOUND);
+      }
+
+      if (post.status !== PostStatus.PUBLISHED) {
+        throw new NotFoundException(BlogExceptions.CANT_LIKE_UNPUBLISHED_POST);
       }
 
       const comment = await this.commentsRepository.createComment(
@@ -54,14 +58,24 @@ export class CommentsService {
         throw new NotFoundException(BlogExceptions.POST_NOT_FOUND);
       }
 
+      const existingComment = await this.commentsRepository.getCommentById(
+        commentId
+      );
+
+      if (!existingComment) {
+        throw new NotFoundException(BlogExceptions.COMMENT_NOT_FOUND);
+      }
+
+      if (existingComment.authorId !== userId) {
+        throw new BadRequestException(
+          BlogExceptions.USER_CANT_DELETE_SOMEONE_ELSE_COMMENT
+        );
+      }
+
       const comment = await this.commentsRepository.deleteComment(
         commentId,
         userId
       );
-
-      if (!comment) {
-        throw new NotFoundException(BlogExceptions.COMMENT_NOT_FOUND);
-      }
 
       await this.postsService.updatePost(
         {

@@ -6,4 +6,7 @@ export const BlogExceptions = {
   DELETE_COMMENT_ACTION_FAILED: 'Delete comment action failed',
   LIKE_ACTION_FAILED: 'Like action failed',
   COMMENT_NOT_FOUND: 'Comment not found',
+  CANT_LIKE_UNPUBLISHED_POST: `Can't like unpublished post`,
+  USER_CANT_DELETE_SOMEONE_ELSE_COMMENT:
+    "User can't delete someone else comment",
 };

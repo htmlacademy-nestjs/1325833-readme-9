@@ -25,6 +25,9 @@ import {
   RegisterRdo,
   RefreshRdo,
   SubscribeRdo,
+  GetUserFullInfoRdo,
+  BaseResponse,
+  UpdatePostsCountDto,
 } from '@project/core';
 import {
   RegisterSwaggerDecorator,
@@ -34,6 +37,7 @@ import {
   RefreshSwaggerDecorator,
   LogoutSwaggerDecorator,
   SubscribeSwaggerDecorator,
+  GetUserFullInfoSwaggerDecorator,
 } from '@project/swagger';
 
 @ApiTags('Account')
@@ -52,13 +56,6 @@ export class AccountController {
   @LoginSwaggerDecorator()
   async login(@Body() dto: LoginUserDto): Promise<LoginRdo> {
     return this.accountService.login(dto);
-  }
-
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @GetUserSwaggerDecorator()
-  async getUser(@Param('id') id: string): Promise<GetUserRdo> {
-    return this.accountService.getUser(id);
   }
 
   @Patch('change-password')
@@ -93,5 +90,28 @@ export class AccountController {
     @CurrentUser('id') currentUserId: string
   ): Promise<SubscribeRdo> {
     return this.accountService.subscribe(dto, currentUserId);
+  }
+
+  @Get('full-info/:id')
+  @UseGuards(JwtAuthGuard)
+  @GetUserFullInfoSwaggerDecorator()
+  async getUserFullInfo(@Param('id') id: string): Promise<GetUserFullInfoRdo> {
+    return this.accountService.getUserFullInfo(id);
+  }
+
+  @Post('update-posts-count')
+  @UseGuards(JwtAuthGuard)
+  async updatePostsCount(
+    @Body() dto: UpdatePostsCountDto,
+    @CurrentUser('id') currentUserId: string
+  ): Promise<BaseResponse> {
+    return this.accountService.updatePostsCount(currentUserId, dto.operation);
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @GetUserSwaggerDecorator()
+  async getUser(@Param('id') id: string): Promise<GetUserRdo> {
+    return this.accountService.getUser(id);
   }
 }
