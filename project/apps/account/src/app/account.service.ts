@@ -26,6 +26,9 @@ import {
   RefreshRdo,
   RegisterRdo,
   SubscribeRdo,
+  GetUserFullInfoRdo,
+  BaseResponse,
+  UserPostsCountUpdateType,
 } from '@project/core';
 
 @Injectable()
@@ -53,10 +56,11 @@ export class AccountService {
       postsCount: 0,
     };
 
-    await this.userRepository.create({
-      ...newUserPayload,
-      passwordHash,
-    });
+    const { passwordHash: _, ...restNewUser } =
+      await this.userRepository.create({
+        ...newUserPayload,
+        passwordHash,
+      });
 
     await this.amqpConnection.publish(
       RABBIT_EXCHANGE,
@@ -64,7 +68,11 @@ export class AccountService {
       newUserPayload.email
     );
 
-    return { isSuccess: true };
+    const refreshTokenId = uuidv4();
+    return this.generateTokens(restNewUser._id, refreshTokenId, {
+      id: restNewUser._id,
+      ...restNewUser,
+    });
   }
 
   async login(dto: LoginUserDto): Promise<LoginRdo> {
@@ -148,6 +156,22 @@ export class AccountService {
     };
   }
 
+  async getUserFullInfo(id: string): Promise<GetUserFullInfoRdo> {
+    const user = await this.userRepository.findById(id);
+
+    if (!user) {
+      throw new NotFoundException(AccountExceptions.USER_NOT_FOUND);
+    }
+
+    const { _id: userId, username, email } = user;
+
+    return {
+      id: userId,
+      username,
+      email,
+    };
+  }
+
   async changePassword(
     dto: ChangeUserPasswordDto,
     id: string
@@ -204,6 +228,33 @@ export class AccountService {
       },
       userId
     );
+  }
+
+  async updatePostsCount(
+    currentUserId: string,
+    operationType: UserPostsCountUpdateType
+  ): Promise<BaseResponse> {
+    try {
+      const user = await this.userRepository.findById(currentUserId);
+
+      if (!user) {
+        throw new NotFoundException(AccountExceptions.USER_NOT_FOUND);
+      }
+
+      await this.userRepository.update(
+        {
+          postsCount:
+            operationType === UserPostsCountUpdateType.INCREMENT
+              ? (user.postsCount += 1)
+              : (user.postsCount -= 1),
+        },
+        currentUserId
+      );
+
+      return { isSuccess: true };
+    } catch {
+      return { isSuccess: false };
+    }
   }
 
   private async generateTokens<T>(

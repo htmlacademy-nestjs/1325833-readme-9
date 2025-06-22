@@ -10,3 +10,4 @@ export * from './get-post-by-id-swagger.decorator';
 export * from './comment-post-swagger.decorator';
 export * from './delete-comment-swagger.decorator';
 export * from './get-comments-swagger.decorator';
+export * from './get-enriched-posts-swagger.decorator';

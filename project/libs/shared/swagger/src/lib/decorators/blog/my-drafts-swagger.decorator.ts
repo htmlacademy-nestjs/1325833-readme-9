@@ -6,7 +6,8 @@ export const MyDraftsSwaggerDecorator = () =>
   applyDecorators(
     ApiBearerAuth(),
     ApiResponse({
-      type: Array<CommonPostRdo>,
+      type: CommonPostRdo,
+      isArray: true,
       status: HttpStatus.OK,
       description: 'Posts fetch successfully',
     }),

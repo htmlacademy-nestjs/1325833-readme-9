@@ -186,6 +186,10 @@ export class PostsService {
         throw new NotFoundException(BlogExceptions.POST_NOT_FOUND);
       }
 
+      if (post.status !== PostStatus.PUBLISHED) {
+        throw new NotFoundException(BlogExceptions.CANT_LIKE_UNPUBLISHED_POST);
+      }
+
       const existingLike = await this.postsRepository.findLikeByUserAndPostId(
         postId,
         userId

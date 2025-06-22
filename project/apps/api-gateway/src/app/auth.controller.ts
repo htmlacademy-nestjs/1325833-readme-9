@@ -10,6 +10,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   UseInterceptors,
+  FileTypeValidator,
 } from '@nestjs/common';
 import {
   HTTP_CLIENT,
@@ -62,6 +63,7 @@ export class AuthController {
         fileIsRequired: false,
         validators: [
           new MaxFileSizeValidator({ maxSize: 500 * 1024 }), // 500kb
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png)$/ }),
         ],
       })
     )

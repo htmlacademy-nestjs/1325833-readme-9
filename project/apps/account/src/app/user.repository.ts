@@ -11,9 +11,9 @@ export class UserRepository {
   ) {}
 
   async create(user: Omit<User, 'id' | 'subscribers'>): Promise<UserEntity> {
-    const newUser = new this.userModel(user);
+    const newUser = await new this.userModel(user).save();
 
-    return newUser.save();
+    return newUser.toObject();
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {

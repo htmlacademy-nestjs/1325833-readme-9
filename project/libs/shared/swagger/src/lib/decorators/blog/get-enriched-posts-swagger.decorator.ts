@@ -1,12 +1,12 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiExtraModels, ApiResponse } from '@nestjs/swagger';
-import { CommonPostRdo, GetPostsDto } from '@project/core';
+import { ApiExtraModels, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { EnrichedPostRdo, GetPostsDto } from '@project/core';
 
-export const GetPostsSwaggerDecorator = () =>
+export const GetEnrichedPostsSwaggerDecorator = () =>
   applyDecorators(
     ApiExtraModels(GetPostsDto),
     ApiResponse({
-      type: CommonPostRdo,
+      type: EnrichedPostRdo,
       isArray: true,
       status: HttpStatus.OK,
       description: 'Posts get successfully',

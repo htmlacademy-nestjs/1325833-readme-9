@@ -1,16 +1,23 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CommentPostRdo } from '@project/core';
+import {
+  ApiBearerAuth,
+  ApiExtraModels,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { CommentPostRdo, GetCommentsDto } from '@project/core';
 
 export const GetCommentsSwaggerDecorator = () =>
   applyDecorators(
     ApiBearerAuth(),
+    ApiExtraModels(GetCommentsDto),
     ApiOperation({
       summary: `Get comments`,
       description: `Get comments for post`,
     }),
     ApiResponse({
-      type: Array<CommentPostRdo>,
+      type: CommentPostRdo,
+      isArray: true,
       status: HttpStatus.OK,
       description: 'Comments get successfully',
     }),
