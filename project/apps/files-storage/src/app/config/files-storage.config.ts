@@ -7,13 +7,14 @@ import {
   Max,
   validateOrReject,
   ValidateNested,
-  IsPort,
   ValidationError,
 } from 'class-validator';
 import { plainToClass, Transform, Type } from 'class-transformer';
 
-const DEFAULT_PORT = 3002;
-const DEFAULT_MONGO_PORT = 27017;
+enum DefaultPort {
+  DEFAULT_PORT = 3002,
+  DEFAULT_MONGO_PORT = 27017,
+}
 
 enum Environment {
   DEVELOPMENT = 'development',
@@ -28,7 +29,9 @@ class DbConfig {
   @IsInt()
   @Min(1)
   @Max(65535)
-  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_MONGO_PORT))
+  @Transform(({ value }) =>
+    value ? parseInt(value, 10) : DefaultPort.DEFAULT_MONGO_PORT
+  )
   port: number;
 
   @IsString()
@@ -52,7 +55,9 @@ export class ApplicationConfig {
   @IsInt()
   @Min(1)
   @Max(65535)
-  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_PORT))
+  @Transform(({ value }) =>
+    value ? parseInt(value, 10) : DefaultPort.DEFAULT_PORT
+  )
   port: number;
 
   @IsString()

@@ -11,15 +11,17 @@ import {
 } from 'class-validator';
 import { plainToClass, Transform, Type } from 'class-transformer';
 
+enum DefaultPort {
+  DEFAULT_PORT = 3003,
+  DEFAULT_RABBIT_PORT = 5672,
+  DEFAULT_SMTP_PORT = 8080,
+}
+
 enum Environment {
   DEVELOPMENT = 'development',
   PRODUCTION = 'production',
   STAGE = 'stage',
 }
-
-const DEFAULT_PORT = 3003;
-const DEFAULT_RABBIT_PORT = 5672;
-const DEFAULT_SMTP_PORT = 8080;
 
 class RabbitConfig {
   @IsString()
@@ -28,7 +30,9 @@ class RabbitConfig {
   @IsInt()
   @Min(1)
   @Max(65535)
-  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_RABBIT_PORT))
+  @Transform(({ value }) =>
+    value ? parseInt(value, 10) : DefaultPort.DEFAULT_RABBIT_PORT
+  )
   port: number;
 
   @IsString()
@@ -51,7 +55,9 @@ class SmtpConfig {
   @IsInt()
   @Min(1)
   @Max(65535)
-  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_SMTP_PORT))
+  @Transform(({ value }) =>
+    value ? parseInt(value, 10) : DefaultPort.DEFAULT_SMTP_PORT
+  )
   port: number;
 }
 
@@ -63,7 +69,9 @@ class ApplicationConfig {
   @IsInt()
   @Min(1)
   @Max(65535)
-  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_PORT))
+  @Transform(({ value }) =>
+    value ? parseInt(value, 10) : DefaultPort.DEFAULT_PORT
+  )
   port: number;
 
   @ValidateNested()
