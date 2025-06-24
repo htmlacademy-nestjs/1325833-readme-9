@@ -96,7 +96,7 @@ export class PostController {
       { operation: UserPostsCountUpdateType.INCREMENT }
     );
 
-    this.sendSubscriptionEmail(userId, post.id);
+    await this.sendSubscriptionEmail(userId, post.id);
 
     return post;
   }
