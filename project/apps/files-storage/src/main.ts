@@ -4,6 +4,7 @@ import { FilesStorageModule } from './app/files-storage.module';
 import { ConfigService } from '@nestjs/config';
 import { setupSwagger } from '@project/swagger';
 import * as bodyParser from 'body-parser';
+import { GLOBAL_PREFIX } from '@project/core';
 
 async function bootstrap() {
   const app = await NestFactory.create(FilesStorageModule);
@@ -11,9 +12,7 @@ async function bootstrap() {
   app.use(bodyParser.json({ limit: '20mb' }));
   app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
 
-  const globalPrefix = 'api';
-
-  app.setGlobalPrefix(globalPrefix);
+  app.setGlobalPrefix(GLOBAL_PREFIX);
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -32,7 +31,7 @@ async function bootstrap() {
 
   await app.listen(port);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
+    `🚀 Application is running on: http://localhost:${port}/${GLOBAL_PREFIX}`
   );
 }
 

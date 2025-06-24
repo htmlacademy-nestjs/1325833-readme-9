@@ -17,8 +17,10 @@ enum Environment {
   STAGE = 'stage',
 }
 
-const DEFAULT_PORT = 3004;
-const DEFAULT_RABBIT_PORT = 5672;
+enum DefaultPort {
+  DEFAULT_PORT = 3004,
+  DEFAULT_RABBIT_PORT = 5672,
+}
 
 class RabbitConfig {
   @IsString()
@@ -27,7 +29,9 @@ class RabbitConfig {
   @IsInt()
   @Min(1)
   @Max(65535)
-  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_RABBIT_PORT))
+  @Transform(({ value }) =>
+    value ? parseInt(value, 10) : DefaultPort.DEFAULT_RABBIT_PORT
+  )
   port: number;
 
   @IsString()
@@ -51,7 +55,9 @@ class ApplicationConfig {
   @IsInt()
   @Min(1)
   @Max(65535)
-  @Transform(({ value }) => (value ? parseInt(value, 10) : DEFAULT_PORT))
+  @Transform(({ value }) =>
+    value ? parseInt(value, 10) : DefaultPort.DEFAULT_PORT
+  )
   port: number;
 
   @IsString()
